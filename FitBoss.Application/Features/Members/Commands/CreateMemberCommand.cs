@@ -2,6 +2,7 @@
 using FitBoss.Domain.Entities;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace FitBoss.Application.Features.Members.Commands;
@@ -9,10 +10,12 @@ public record CreateMemberCommand(CreateMemberModel member) : IRequest<Result<Me
 
 public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, Result<Member>>
 {
+    private readonly ILogger<CreateMemberCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
 
-    public CreateMemberCommandHandler(IApplicationDbContext context)
+    public CreateMemberCommandHandler(ILogger<CreateMemberCommandHandler> logger, IApplicationDbContext context)
     {
+        _logger = logger;
         _context = context;
     }
 
@@ -30,7 +33,9 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
 
         if (result == 0)
         {
-            return await Result<Member>.FailureAsync("There was an error creating the member. Please try again");
+            var response = await Result<Member>.FailureAsync("There was an error creating the member. Please try again");
+            _logger.LogError($"Error creating member: {response.Exception.Message} - {DateTime.UtcNow}");
+            return response;
         }
 
         member.AddDomainEvent(new MemberCreatedEvent(member));

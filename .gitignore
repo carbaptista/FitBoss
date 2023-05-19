@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Persistence/Database/FitBoss.db-shm
 /Persistence/Database/FitBoss.db-wal
+/Persistence/Database/FitBoss.db

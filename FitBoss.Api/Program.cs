@@ -3,7 +3,8 @@ using Persistence;
 using System.Net.NetworkInformation;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 // Add services to the container.
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddControllers();

@@ -1,6 +1,7 @@
 ﻿using Domain.Events.Members;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace FitBoss.Application.Features.Members.Commands;
@@ -8,10 +9,12 @@ public record EditMemberCommand(EditMemberModel Member) : IRequest<Result<bool>>
 
 public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Result<bool>>
 {
+    private readonly ILogger<EditMemberCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
 
-    public EditMemberCommandHandler(IApplicationDbContext context)
+    public EditMemberCommandHandler(ILogger<EditMemberCommandHandler> logger, IApplicationDbContext context)
     {
+        _logger = logger;
         _context = context;
     }
 
@@ -23,7 +26,10 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
 
         var updated = member.Update(request.Member);
         if (!updated)
-            return await Result<bool>.FailureAsync("There was an error updating member. Please try again");
+        {
+            _logger.LogError($"Error updating member with Id {member.Id} - {DateTime.UtcNow}");
+            return await Result<bool>.FailureAsync("There was an error updating the member. Please try again");
+        }
 
         _context.Members.Update(member);
         await _context.SaveChangesAsync();

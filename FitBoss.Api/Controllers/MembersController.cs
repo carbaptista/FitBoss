@@ -78,7 +78,7 @@ public class MembersController : ControllerBase
 
     [HttpDelete]
     [Route("members/delete")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete([FromBody] Guid id)
     {
         var request = new DeleteMemberCommand(id);
         var response = await _mediatr.Send(request);
