@@ -27,7 +27,6 @@ public class Member : Person
     public bool Update(EditMemberModel member)
     {
         Name = member.Name;
-        Number = member.Number;
         SubscriptionType = member.SubscriptionType;
         DateOfBirth = member.DateOfBirth;
         Gender = member.Gender;

@@ -21,8 +21,6 @@ public class EditMemberModel
     [Required]
     public SubscriptionType SubscriptionType { get; set; }
 
-    [Required]
-    public int Number { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public bool? Gender { get; set; }
     public int? Weight { get; set; }

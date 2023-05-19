@@ -70,10 +70,10 @@ public class MembersController : ControllerBase
         var request = new EditMemberCommand(member);
         var response = await _mediatr.Send(request);
 
-        if (!response)
-            return BadRequest();
+        if (!response.Succeeded)
+            return Problem(response.Messages[0]);
 
-        return Ok();
+        return Ok(response);
     }
 
     [HttpDelete]

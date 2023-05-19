@@ -23,7 +23,6 @@ public class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, R
         _context.Members.Remove(member);
         await _context.SaveChangesAsync();
 
-
         member.AddDomainEvent(new MemberDeletedEvent(member));
         return await Result<bool>.SuccessAsync("Member deleted");
     }

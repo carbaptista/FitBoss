@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Persistence/Database/FitBoss.db-shm
+/Persistence/Database/FitBoss.db-wal
