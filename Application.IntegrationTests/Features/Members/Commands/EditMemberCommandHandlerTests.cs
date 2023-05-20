@@ -45,7 +45,6 @@ public class EditMemberCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
 
         result.Data.Id.Should().Be(createdMemberResult.Data.Id);
-        result.Data.CreatedBy.Should().Be(editMember.CreatedBy);
         result.Data.UpdatedBy.Should().NotBeNull();
 
         result.Data.Name.Should().NotBeNullOrEmpty();
@@ -130,7 +129,6 @@ public class EditMemberCommandHandlerTests
         return new EditMemberModel()
         {
             Id = id,
-            CreatedBy = creatorId,
             UpdatedBy = Guid.NewGuid(),
             Name = "new name",
             Email = "test2@email.com",

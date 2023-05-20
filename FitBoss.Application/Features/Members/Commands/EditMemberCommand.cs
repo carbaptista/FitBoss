@@ -3,6 +3,7 @@ using FitBoss.Domain.Entities;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shared;
 
@@ -38,7 +39,7 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
             _context.Members.Update(member);
             await _context.SaveChangesAsync();
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
             var innerException = e.InnerException as SqliteException;
             if (innerException != null && innerException.SqliteErrorCode == 19)

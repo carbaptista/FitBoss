@@ -6,8 +6,6 @@ public class EditManagerModel
     [Required(AllowEmptyStrings = false, ErrorMessage = "Id is required")]
     public Guid Id { get; set; }
 
-    public Guid? CreatedBy { get; set; }
-
     [Required(AllowEmptyStrings = false, ErrorMessage = "Id of who's updating is required")]
     public Guid UpdatedBy { get; set; }
 

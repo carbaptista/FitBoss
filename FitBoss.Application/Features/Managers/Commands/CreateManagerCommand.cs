@@ -1,4 +1,5 @@
-﻿using Domain.Request_Models.Managers;
+﻿using Domain.Events.Managers;
+using Domain.Request_Models.Managers;
 using FitBoss.Application;
 using FitBoss.Domain.Entities;
 using MediatR;
@@ -47,6 +48,7 @@ public class CreateManagerCommandHandler : IRequestHandler<CreateManagerCommand,
             }
         }
 
+        manager.AddDomainEvent(new ManagerCreatedEvent(manager));
         return await Result<Manager>.SuccessAsync(manager, "Manager created");
     }
 }

@@ -7,9 +7,6 @@ public class EditMemberModel
     [Required(AllowEmptyStrings = false, ErrorMessage = "Id is required")]
     public Guid Id { get; set; }
 
-    [Required(AllowEmptyStrings = false, ErrorMessage = "Id of creator is required")]
-    public Guid CreatedBy { get; set; }
-
     [Required(AllowEmptyStrings = false, ErrorMessage = "Id of who's updating is required")]
     public Guid UpdatedBy { get; set; }
 

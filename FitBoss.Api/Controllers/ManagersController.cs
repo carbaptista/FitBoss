@@ -44,14 +44,27 @@ public class ManagersController : ControllerBase
 
     [HttpPost]
     [Route("managers/create")]
-    public async Task<IActionResult> Create(CreateManagerModel data)
+    public async Task<IActionResult> Create(CreateManagerModel manager)
     {
-        var command = new CreateManagerCommand(data);
+        var command = new CreateManagerCommand(manager);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return Problem(result.Messages[0]);
 
         return Created("", result);
+    }
+
+    [HttpPatch]
+    [Route("managers/update")]
+    public async Task<IActionResult> Update([FromBody] EditManagerModel manager)
+    {
+        var command = new EditManagerCommand(manager);
+        var result = await _mediatr.Send(command);
+
+        if (!result.Succeeded)
+            return Problem(result.Messages[0]);
+
+        return Ok(result);
     }
 }

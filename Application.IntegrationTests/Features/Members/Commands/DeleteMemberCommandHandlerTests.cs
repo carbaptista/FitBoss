@@ -21,7 +21,7 @@ public class DeleteMemberCommandHandlerTests
     }
 
     [Fact]
-    public async Task Delete_Should_ReturnSuccess_WhenValid()
+    public async Task Delete_Should_ReturnSuccessResult_WhenValid()
     {
         var createdMemberResult = await CreateFreshMember();
 
