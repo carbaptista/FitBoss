@@ -14,7 +14,7 @@ public class MemberTests
         var email = "test@email.com";
         var creatorId = Guid.NewGuid();
 
-        var result = Person.Create<Member>(name, email, creatorId);
+        var result = Person.Create<Trainer>(name, email, creatorId);
 
         result.Should().NotBeNull();
         result.Name.Should().BeSameAs(name);
@@ -30,7 +30,7 @@ public class MemberTests
         var email = "test@email.com";
         var creatorId = Guid.NewGuid();
 
-        var member = Person.Create<Member>(name, email, creatorId);
+        var member = Person.Create<Trainer>(name, email, creatorId);
 
         var editedMember = new EditMemberModel()
         {

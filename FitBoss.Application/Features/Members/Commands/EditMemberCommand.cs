@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace FitBoss.Application.Features.Members.Commands;
-public record EditMemberCommand(EditMemberModel Member) : IRequest<Result<Member>>;
+public record EditMemberCommand(EditMemberModel Member) : IRequest<Result<Trainer>>;
 
-public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Result<Member>>
+public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Result<Trainer>>
 {
     private readonly ILogger<EditMemberCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
@@ -21,17 +21,17 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
         _context = context;
     }
 
-    public async Task<Result<Member>> Handle(EditMemberCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Trainer>> Handle(EditMemberCommand request, CancellationToken cancellationToken)
     {
         var member = await _context.Members.FindAsync(request.Member.Id);
         if (member is null)
-            return await Result<Member>.FailureAsync("Member not found");
+            return await Result<Trainer>.FailureAsync("Member not found");
 
         var updated = member.Update(request.Member);
         if (!updated)
         {
             _logger.LogError($"Error updating member with Id {member.Id} - {DateTime.UtcNow}");
-            return await Result<Member>.FailureAsync("There was an error updating the member. Please try again");
+            return await Result<Trainer>.FailureAsync("There was an error updating the member. Please try again");
         }
 
         try
@@ -44,11 +44,11 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
             var innerException = e.InnerException as SqliteException;
             if (innerException != null && innerException.SqliteErrorCode == 19)
             {
-                return await Result<Member>.FailureAsync("This email has already been registered");
+                return await Result<Trainer>.FailureAsync("This email has already been registered");
             }
         }
 
         member.AddDomainEvent(new MemberUpdatedEvent(member));
-        return await Result<Member>.SuccessAsync(member, "Member updated");
+        return await Result<Trainer>.SuccessAsync(member, "Member updated");
     }
 }

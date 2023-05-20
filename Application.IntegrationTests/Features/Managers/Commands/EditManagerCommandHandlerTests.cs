@@ -2,7 +2,6 @@
 using Application.IntegrationTests.Context;
 using Domain.Request_Models.Managers;
 using FitBoss.Application;
-using FitBoss.Domain.Entities;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
