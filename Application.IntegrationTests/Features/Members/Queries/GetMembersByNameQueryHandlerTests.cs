@@ -6,7 +6,7 @@ using Moq;
 using FitBoss.Application.Features.Members.Queries;
 using FluentAssertions;
 
-namespace Application.IntegrationTests.Members.Queries;
+namespace Application.IntegrationTests.Features.Members.Queries;
 public class GetMembersByNameQueryHandlerTests
 {
     private readonly IApplicationDbContext _context;

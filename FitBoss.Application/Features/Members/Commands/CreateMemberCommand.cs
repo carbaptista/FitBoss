@@ -23,7 +23,7 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
 
     public async Task<Result<Member>> Handle(CreateMemberCommand request, CancellationToken cancellationToken)
     {
-        var member = Member.Create(request.member.Name, request.member.Email, request.member.CreatorId);
+        var member = Person.Create<Member>(request.member.Name, request.member.Email, request.member.CreatorId);
 
         try
         {

@@ -11,18 +11,6 @@ public class Member : Person
     public int? Weight { get; private set; }
     public int? Height { get; private set; }
 
-    public static Member Create(string name, string email, Guid CreatorId)
-    {
-        return new Member
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Email = email,
-            CreatedBy = CreatorId,
-            CreatedDate = DateTime.UtcNow
-        };
-    }
-
     public bool Update(EditMemberModel newData)
     {
         Name = newData.Name;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Shared;
 
-namespace Application.IntegrationTests.Members.Commands;
+namespace Application.IntegrationTests.Features.Members.Commands;
 public class DeleteMemberCommandHandlerTests
 {
     private readonly Mock<ILogger<CreateMemberCommandHandler>> _logger;

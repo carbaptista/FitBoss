@@ -7,7 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Application.IntegrationTests.Members.Commands;
+namespace Application.IntegrationTests.Features.Members.Commands;
 public class EditMemberCommandHandlerTests
 {
     private readonly Mock<ILogger<CreateMemberCommandHandler>> _logger;

@@ -1,11 +1,7 @@
-using FitBoss.Application;
-using FitBoss.Application.Features.Members.Commands;
 using FitBoss.Domain.Entities;
 using FitBoss.Domain.Enums;
 using FitBoss.Domain.Request_Models.Members;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace Application.UnitTests.Features.Members.Commands;
 
@@ -18,7 +14,7 @@ public class MemberTests
         var email = "test@email.com";
         var creatorId = new Guid("AAF20B83-687C-400C-A0CC-4A9CFF815321");
 
-        var result = Member.Create(name, email, creatorId);
+        var result = Person.Create<Member>(name, email, creatorId);
 
         result.Should().NotBeNull();
         result.Name.Should().BeSameAs(name);
@@ -34,11 +30,11 @@ public class MemberTests
         var email = "test@email.com";
         var creatorId = new Guid("AAF20B83-687C-400C-A0CC-4A9CFF815321");
 
-        var member = Member.Create(name, email, creatorId);
+        var member = Person.Create<Member>(name, email, creatorId);
 
         var editedMember = new EditMemberModel()
         {
-            Name = "firstname lastname",
+            Name = "new name",
             SubscriptionType = SubscriptionType.Yearly,
             DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-20)),
             Gender = true,
@@ -51,6 +47,7 @@ public class MemberTests
         member.Update(editedMember);
 
         member.Name.Should().NotBeNullOrEmpty();
+        member.Name.Should().NotBeSameAs(name);
         member.CreatedBy.Should().Be(creatorId);
         member.SubscriptionType.Should().Be(SubscriptionType.Yearly);
         member.DateOfBirth.Should().Be(DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-20)));

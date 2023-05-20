@@ -26,5 +26,17 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<Member>()
             .HasIndex(x => x.Email)
             .IsUnique();
+
+        modelBuilder.Entity<Manager>()
+            .HasIndex(x => x.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Trainer>()
+            .HasIndex(x => x.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Receptionist>()
+            .HasIndex(x => x.Email)
+            .IsUnique();
     }
 }
