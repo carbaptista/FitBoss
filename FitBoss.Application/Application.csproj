@@ -24,9 +24,4 @@
 			<_Parameter1>Application.UnitTests</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
-
-
-	<ItemGroup>
-	  <Folder Include="Features\Managers\Queries\" />
-	</ItemGroup>
 </Project>

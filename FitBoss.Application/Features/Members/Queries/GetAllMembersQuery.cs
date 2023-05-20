@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace FitBoss.Application.Features.Members.Queries;
-public record GetAllMembersQuery() : IRequest<Result<List<Member>>>;
+public record GetAllMembersQuery : IRequest<Result<List<Member>>>;
 
 public class GetAllMembersQueryHandler : IRequestHandler<GetAllMembersQuery, Result<List<Member>>>
 {
