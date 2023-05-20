@@ -1,18 +1,12 @@
 ﻿using Domain.Events.Managers;
 using Domain.Request_Models.Managers;
 using FitBoss.Application;
-using FitBoss.Application.Features.Members.Commands;
 using FitBoss.Domain.Entities;
 using MediatR;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Managers.Commands;
 public record EditManagerCommand(EditManagerModel data) : IRequest<Result<Manager>>;
@@ -46,7 +40,7 @@ public class EditManagerCommandHandler : IRequestHandler<EditManagerCommand, Res
             _context.Managers.Update(manager);
             await _context.SaveChangesAsync();
         }
-        catch(DbUpdateException e)
+        catch (DbUpdateException e)
         {
             var innerException = e.InnerException as SqliteException;
             if (innerException != null && innerException.SqliteErrorCode == 19)

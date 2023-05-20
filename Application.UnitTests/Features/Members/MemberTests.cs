@@ -3,7 +3,7 @@ using FitBoss.Domain.Enums;
 using FitBoss.Domain.Request_Models.Members;
 using FluentAssertions;
 
-namespace Application.UnitTests.Features.Members.Commands;
+namespace Application.UnitTests.Features.Members;
 
 public class MemberTests
 {
@@ -12,7 +12,7 @@ public class MemberTests
     {
         var name = "firstname lastname";
         var email = "test@email.com";
-        var creatorId = new Guid("AAF20B83-687C-400C-A0CC-4A9CFF815321");
+        var creatorId = Guid.NewGuid();
 
         var result = Person.Create<Member>(name, email, creatorId);
 
@@ -28,7 +28,7 @@ public class MemberTests
     {
         var name = "firstname lastname";
         var email = "test@email.com";
-        var creatorId = new Guid("AAF20B83-687C-400C-A0CC-4A9CFF815321");
+        var creatorId = Guid.NewGuid();
 
         var member = Person.Create<Member>(name, email, creatorId);
 

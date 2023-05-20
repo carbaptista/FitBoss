@@ -1,9 +1,8 @@
-﻿using FitBoss.Application.Features.Members.Commands;
+﻿using Domain.Events.Managers;
 using FitBoss.Application;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Shared;
-using Domain.Events.Managers;
 
 namespace Application.Features.Managers.Commands;
 public record DeleteManagerCommand(Guid Id) : IRequest<Result<bool>>;

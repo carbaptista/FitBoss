@@ -1,10 +1,8 @@
 ﻿using Domain.Request_Models.Managers;
 using FitBoss.Domain.Entities;
-using FitBoss.Domain.Enums;
-using FitBoss.Domain.Request_Models.Members;
 using FluentAssertions;
 
-namespace Application.UnitTests.Features.Managers.Commands;
+namespace Application.UnitTests.Features.Managers;
 public class ManagerTests
 {
     [Fact]
@@ -12,7 +10,7 @@ public class ManagerTests
     {
         var name = "firstname lastname";
         var email = "test@email.com";
-        var creatorId = new Guid("AAF20B83-687C-400C-A0CC-4A9CFF815321");
+        var creatorId = Guid.NewGuid();
 
         var result = Person.Create<Manager>(name, email, creatorId);
 
@@ -28,7 +26,7 @@ public class ManagerTests
     {
         var name = "firstname lastname";
         var email = "test@email.com";
-        var creatorId = new Guid("AAF20B83-687C-400C-A0CC-4A9CFF815321");
+        var creatorId = Guid.NewGuid();
 
         var manager = Person.Create<Manager>(name, email, creatorId);
 

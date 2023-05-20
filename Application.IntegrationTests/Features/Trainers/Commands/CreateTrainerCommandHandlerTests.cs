@@ -1,18 +1,19 @@
-﻿using Application.Features.Managers.Commands;
+﻿using Application.Features.Trainers.Commands;
 using Application.IntegrationTests.Context;
-using Domain.Request_Models.Managers;
+using Domain.Request_Models.Trainers;
 using FitBoss.Application;
+using FitBoss.Domain.Entities;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Application.IntegrationTests.Features.Managers.Commands;
-public class CreateManagerCommandHandlerTests
+namespace Application.IntegrationTests.Features.Trainers.Commands;
+public class CreateTrainerCommandHandlerTests
 {
-    private readonly Mock<ILogger<CreateManagerCommandHandler>> _logger;
+    private readonly Mock<ILogger<CreateTrainerCommandHandler>> _logger;
     private readonly IApplicationDbContext _context;
 
-    public CreateManagerCommandHandlerTests()
+    public CreateTrainerCommandHandlerTests()
     {
         _logger = new();
         _context = new TestContextFactory().Create();
@@ -21,48 +22,48 @@ public class CreateManagerCommandHandlerTests
     [Fact]
     public async Task Create_Should_ReturnSuccessResult_WhenValid()
     {
-        var manager = new CreateManagerModel()
+        var trainer = new CreateTrainerModel
         {
             CreatorId = Guid.NewGuid(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
-        var command = new CreateManagerCommand(manager);
-        var handler = new CreateManagerCommandHandler(_logger.Object, _context);
+        var command = new CreateTrainerCommand(trainer);
+        var handler = new CreateTrainerCommandHandler(_logger.Object, _context);
 
         var result = await handler.Handle(command, default);
 
         result.Succeeded.Should().BeTrue();
         result.Messages[0].Should().NotBeNullOrEmpty();
-        result.Data.Name.Should().BeSameAs(manager.Name);
-        result.Data.Email.Should().BeSameAs(manager.Email);
-        result.Data.CreatedBy.Should().Be(manager.CreatorId);
+        result.Data.Name.Should().BeSameAs(trainer.Name);
+        result.Data.Email.Should().BeSameAs(trainer.Email);
+        result.Data.CreatedBy.Should().Be(trainer.CreatorId);
     }
 
     [Fact]
     public async Task Create_Should_ReturnFailureResult_WhenEmailIsNotUnique()
     {
-        var handler = new CreateManagerCommandHandler(_logger.Object, _context);
+        var handler = new CreateTrainerCommandHandler(_logger.Object, _context);
 
-        var manager1 = new CreateManagerModel
+        var trainer1 = new CreateTrainerModel
         {
             CreatorId = Guid.NewGuid(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
-        var command1 = new CreateManagerCommand(manager1);
+        var command1 = new CreateTrainerCommand(trainer1);
         await handler.Handle(command1, default);
 
-        var manager2 = new CreateManagerModel
+        var trainer2 = new CreateTrainerModel
         {
             CreatorId = Guid.NewGuid(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
-        var command2 = new CreateManagerCommand(manager2);
+        var command2 = new CreateTrainerCommand(trainer2);
         var result = await handler.Handle(command2, default);
 
         result.Succeeded.Should().BeFalse();
