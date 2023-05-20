@@ -19,6 +19,11 @@ public class EditMemberModel
     public string Name { get; set; } = "";
 
     [Required]
+    [DataType(DataType.EmailAddress)]
+    [StringLength(320, MinimumLength = 3)]
+    public string Email { get; set; } = "";
+
+    [Required]
     public SubscriptionType SubscriptionType { get; set; }
 
     public DateOnly? DateOfBirth { get; set; }

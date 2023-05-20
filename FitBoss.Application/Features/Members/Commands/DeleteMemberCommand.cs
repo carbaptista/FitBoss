@@ -21,10 +21,7 @@ public class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, R
     {
         var member = await _context.Members.FindAsync(request.id);
         if (member is null)
-        {
-            _logger.LogError("Error deleting the member");
-            return await Result<bool>.FailureAsync("There was an error deleting the member. Please try again.");
-        }
+            return await Result<bool>.FailureAsync("Member does not exist.");
 
         _context.Members.Remove(member);
         await _context.SaveChangesAsync();
