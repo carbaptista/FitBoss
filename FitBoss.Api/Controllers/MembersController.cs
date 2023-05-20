@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using FitBoss.Application.Features.Members.Commands;
+﻿using FitBoss.Application.Features.Members.Commands;
 using FitBoss.Application.Features.Members.Queries;
-using FitBoss.Domain.Entities;
-using FitBoss.Domain.Request_Models;
 using FitBoss.Domain.Request_Models.Members;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FitBoss.Api.Controllers;
 
@@ -26,9 +24,7 @@ public class MembersController : ControllerBase
         var result = await _mediatr.Send(request);
 
         if (!result.Succeeded)
-        {
-            return NotFound(result.Messages[0]);
-        }
+            return NotFound(result.Messages);
 
         return Ok(result.Data);
     }
@@ -41,9 +37,7 @@ public class MembersController : ControllerBase
         var result = await _mediatr.Send(request);
 
         if (!result.Succeeded)
-        {
-            return NotFound(result.Messages[0]);
-        }
+            return NotFound(result.Messages);
 
         return Ok(result.Data);
     }
@@ -56,11 +50,9 @@ public class MembersController : ControllerBase
         var result = await _mediatr.Send(request);
 
         if (!result.Succeeded)
-        {
             return Problem(result.Messages[0]);
-        }
 
-        return Ok(result);
+        return Created("", result);
     }
 
     [HttpPatch]

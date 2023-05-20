@@ -23,6 +23,9 @@ public class ManagersController : ControllerBase
         var command = new GetAllManagersQuery();
         var result = await _mediatr.Send(command);
 
+        if (!result.Succeeded)
+            return NotFound(result.Messages);
+
         return Ok(result);
     }
 
@@ -30,7 +33,13 @@ public class ManagersController : ControllerBase
     [Route("managers/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
-        return Ok();
+        var command = new GetManagersByNameQuery(name);
+        var result = await _mediatr.Send(command);
+
+        if (!result.Succeeded)
+            return NotFound(result.Messages);
+
+        return Ok(result);
     }
 
     [HttpPost]
@@ -41,10 +50,8 @@ public class ManagersController : ControllerBase
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
-        {
             return Problem(result.Messages[0]);
-        }
 
-        return Ok(result);
+        return Created("", result);
     }
 }
