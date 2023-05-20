@@ -20,8 +20,8 @@ public class MembersController : ControllerBase
     [Route("members")]
     public async Task<IActionResult> GetAll()
     {
-        var request = new GetAllMembersQuery();
-        var result = await _mediatr.Send(request);
+        var command = new GetAllMembersQuery();
+        var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return NotFound(result.Messages);
@@ -33,8 +33,8 @@ public class MembersController : ControllerBase
     [Route("members/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
-        var request = new GetMembersByNameQuery(name);
-        var result = await _mediatr.Send(request);
+        var command = new GetMembersByNameQuery(name);
+        var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return NotFound(result.Messages);
@@ -46,8 +46,8 @@ public class MembersController : ControllerBase
     [Route("members/create")]
     public async Task<IActionResult> Create(CreateMemberModel member)
     {
-        var request = new CreateMemberCommand(member);
-        var result = await _mediatr.Send(request);
+        var command = new CreateMemberCommand(member);
+        var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return Problem(result.Messages[0]);
@@ -59,8 +59,8 @@ public class MembersController : ControllerBase
     [Route("members/update")]
     public async Task<IActionResult> Update([FromBody] EditMemberModel member)
     {
-        var request = new EditMemberCommand(member);
-        var result = await _mediatr.Send(request);
+        var command = new EditMemberCommand(member);
+        var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return Problem(result.Messages[0]);
@@ -72,8 +72,8 @@ public class MembersController : ControllerBase
     [Route("members/delete")]
     public async Task<IActionResult> Delete([FromBody] Guid id)
     {
-        var request = new DeleteMemberCommand(id);
-        var result = await _mediatr.Send(request);
+        var command = new DeleteMemberCommand(id);
+        var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return Problem(result.Messages[0]);
