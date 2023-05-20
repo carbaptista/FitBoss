@@ -23,14 +23,14 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var request = new GetAllMembersQuery();
-        var response = await _mediatr.Send(request);
+        var result = await _mediatr.Send(request);
 
-        if (!response.Succeeded)
+        if (!result.Succeeded)
         {
-            return NotFound(response.Messages[0]);
+            return NotFound(result.Messages[0]);
         }
 
-        return Ok(response.Data);
+        return Ok(result.Data);
     }
 
     [HttpGet]
@@ -38,14 +38,14 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> GetByName(string name)
     {
         var request = new GetMembersByNameQuery(name);
-        var response = await _mediatr.Send(request);
+        var result = await _mediatr.Send(request);
 
-        if (!response.Succeeded)
+        if (!result.Succeeded)
         {
-            return NotFound(response.Messages[0]);
+            return NotFound(result.Messages[0]);
         }
 
-        return Ok(response.Data);
+        return Ok(result.Data);
     }
 
     [HttpPost]
@@ -53,14 +53,14 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> Create(CreateMemberModel member)
     {
         var request = new CreateMemberCommand(member);
-        var response = await _mediatr.Send(request);
+        var result = await _mediatr.Send(request);
 
-        if (!response.Succeeded)
+        if (!result.Succeeded)
         {
-            return Problem(response.Messages[0]);
+            return Problem(result.Messages[0]);
         }
 
-        return Ok(response);
+        return Ok(result);
     }
 
     [HttpPatch]
@@ -68,12 +68,12 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> Update([FromBody] EditMemberModel member)
     {
         var request = new EditMemberCommand(member);
-        var response = await _mediatr.Send(request);
+        var result = await _mediatr.Send(request);
 
-        if (!response.Succeeded)
-            return Problem(response.Messages[0]);
+        if (!result.Succeeded)
+            return Problem(result.Messages[0]);
 
-        return Ok(response);
+        return Ok(result);
     }
 
     [HttpDelete]
@@ -81,10 +81,10 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> Delete([FromBody] Guid id)
     {
         var request = new DeleteMemberCommand(id);
-        var response = await _mediatr.Send(request);
+        var result = await _mediatr.Send(request);
 
-        if (!response.Succeeded)
-            return Problem(response.Messages[0]);
+        if (!result.Succeeded)
+            return Problem(result.Messages[0]);
 
         return Ok();
     }
