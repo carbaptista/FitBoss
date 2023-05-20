@@ -48,7 +48,7 @@ public class DeleteMemberCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
     }
 
-    private async Task<Result<Trainer>> CreateFreshMember()
+    private async Task<Result<Member>> CreateFreshMember()
     {
         var member = new CreateMemberModel
         {

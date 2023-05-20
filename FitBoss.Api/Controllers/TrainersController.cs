@@ -1,52 +1,52 @@
-﻿using Application.Features.Managers.Commands;
-using Application.Features.Managers.Queries;
-using Domain.Request_Models.Managers;
+﻿using Application.Features.Trainers.Commands;
+using Application.Features.Trainers.Queries;
+using Domain.Request_Models.Trainers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
 [ApiController]
-public class ManagersController : ControllerBase
+public class TrainersController : ControllerBase
 {
     private readonly IMediator _mediatr;
 
-    public ManagersController(IMediator mediatr)
+    public TrainersController(IMediator mediatr)
     {
         _mediatr = mediatr;
     }
 
     [HttpGet]
-    [Route("managers")]
+    [Route("trainers")]
     public async Task<IActionResult> GetAll()
     {
-        var command = new GetAllManagersQuery();
+        var command = new GetAllTrainersQuery();
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return NotFound(result.Messages);
 
-        return Ok(result);
+        return Ok(result.Data);
     }
 
     [HttpGet]
-    [Route("managers/{name}")]
+    [Route("trainers/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
-        var command = new GetManagersByNameQuery(name);
+        var command = new GetTrainersByNameQuery(name);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return NotFound(result.Messages);
 
-        return Ok(result);
+        return Ok(result.Data);
     }
 
     [HttpPost]
-    [Route("managers/create")]
-    public async Task<IActionResult> Create(CreateManagerModel manager)
+    [Route("trainers/create")]
+    public async Task<IActionResult> Create(CreateTrainerModel trainer)
     {
-        var command = new CreateManagerCommand(manager);
+        var command = new CreateTrainerCommand(trainer);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
@@ -56,10 +56,10 @@ public class ManagersController : ControllerBase
     }
 
     [HttpPatch]
-    [Route("managers/update")]
-    public async Task<IActionResult> Update([FromBody] EditManagerModel manager)
+    [Route("trainers/update")]
+    public async Task<IActionResult> Update([FromBody] EditTrainerModel trainer)
     {
-        var command = new EditManagerCommand(manager);
+        var command = new EditTrainerCommand(trainer);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
@@ -69,10 +69,10 @@ public class ManagersController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("managers/delete")]
+    [Route("trainers/delete")]
     public async Task<IActionResult> Delete([FromBody] Guid id)
     {
-        var command = new DeleteManagerCommand(id);
+        var command = new DeleteTrainerCommand(id);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)

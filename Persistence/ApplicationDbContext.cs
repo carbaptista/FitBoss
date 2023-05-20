@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Persistence;
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public DbSet<Trainer> Members { get; set; }
+    public DbSet<Member> Members { get; set; }
     public DbSet<Trainer> Trainers { get; set; }
     public DbSet<Manager> Managers { get; set; }
     public DbSet<Receptionist> Receptionists { get; set; }
@@ -23,7 +23,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        modelBuilder.Entity<Trainer>()
+        modelBuilder.Entity<Member>()
             .HasIndex(x => x.Email)
             .IsUnique();
 

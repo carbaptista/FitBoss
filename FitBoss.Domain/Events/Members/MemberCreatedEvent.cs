@@ -4,9 +4,9 @@ using FitBoss.Domain.Entities;
 namespace Domain.Events.Members;
 public class MemberCreatedEvent : BaseEvent
 {
-    public Trainer Member { get; }
+    public Member Member { get; }
 
-    public MemberCreatedEvent(Trainer member)
+    public MemberCreatedEvent(Member member)
     {
         Member = member;
     }

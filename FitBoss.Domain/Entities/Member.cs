@@ -3,7 +3,7 @@ using FitBoss.Domain.Request_Models.Members;
 using MediatR;
 
 namespace FitBoss.Domain.Entities;
-public class Trainer : Person
+public class Member : Person
 {
     public SubscriptionType SubscriptionType { get; private set; }
     public DateOnly? DateOfBirth { get; private set; }

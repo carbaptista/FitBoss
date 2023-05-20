@@ -7,19 +7,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "FitBoss.Api\Api.cspr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B5C0A3CC-15A6-4D59-9824-F5D898B8C9CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "FitBoss.Domain\Domain.csproj", "{0AD5477A-29DF-4448-A0F0-9A9B307949D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "FitBoss.Domain\Domain.csproj", "{0AD5477A-29DF-4448-A0F0-9A9B307949D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "FitBoss.Application\Application.csproj", "{B4BFADEA-275B-4941-B5B4-43245C6116C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "FitBoss.Application\Application.csproj", "{B4BFADEA-275B-4941-B5B4-43245C6116C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{110B79F6-56B7-4972-96A7-881553EBE210}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{110B79F6-56B7-4972-96A7-881553EBE210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{CE8A4499-C8DE-42A8-AF6A-BD709B4E2013}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{CE8A4499-C8DE-42A8-AF6A-BD709B4E2013}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5AB1956F-DE09-4548-99EE-B79FF4FA2EB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "Application.UnitTests\Application.UnitTests.csproj", "{C2686C07-377D-479A-9D38-5F07FFCA2722}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.UnitTests", "Application.UnitTests\Application.UnitTests.csproj", "{C2686C07-377D-479A-9D38-5F07FFCA2722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.IntegrationTests", "Application.IntegrationTests\Application.IntegrationTests.csproj", "{B354A024-BF44-439A-BAC7-7AEF5B4D9EBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.IntegrationTests", "Application.IntegrationTests\Application.IntegrationTests.csproj", "{B354A024-BF44-439A-BAC7-7AEF5B4D9EBC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0877DC79-78C5-4128-AAA9-9CF348119200}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
