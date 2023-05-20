@@ -33,8 +33,8 @@ public class CreateTrainerCommandHandler : IRequestHandler<CreateTrainerCommand,
 
             if (result == 0)
             {
-                var response = await Result<Trainer>.FailureAsync("There was an error creating the member. Please try again");
-                _logger.LogError($"Error creating trainer: {response.Exception.Message} - {DateTime.UtcNow}");
+                var response = await Result<Trainer>.FailureAsync("There was an error creating the receptionist. Please try again");
+                _logger.LogError($"Error creating receptionist: {response.Exception.Message} - {DateTime.UtcNow}");
                 return response;
             }
         }
@@ -48,6 +48,6 @@ public class CreateTrainerCommandHandler : IRequestHandler<CreateTrainerCommand,
         }
 
         trainer.AddDomainEvent(new TrainerCreatedEvent(trainer));
-        return await Result<Trainer>.SuccessAsync(trainer, "Trainer created");
+        return await Result<Trainer>.SuccessAsync(trainer, "Receptionist created");
     }
 }

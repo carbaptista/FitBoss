@@ -27,7 +27,7 @@ public class DeleteTrainerCommandHandler : IRequestHandler<DeleteTrainerCommand,
         _context.Trainers.Remove(trainer);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation($"Trainer with Id {trainer.Id} delete - {DateTime.UtcNow}");
+        _logger.LogInformation($"Trainer with Id {trainer.Id} deleted - {DateTime.UtcNow}");
         trainer.AddDomainEvent(new TrainerDeletedEvent(trainer));
         return await Result<bool>.SuccessAsync("Trainer deleted");
     }

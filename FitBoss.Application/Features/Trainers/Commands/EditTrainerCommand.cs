@@ -31,9 +31,7 @@ public class EditTrainerCommandHandler : IRequestHandler<EditTrainerCommand, Res
         var updated = trainer.Update(request.Trainer);
 
         if (!updated)
-        {
             _logger.LogError($"Error updating member with Id {trainer.Id} - {DateTime.UtcNow}");
-        }
 
         try
         {
