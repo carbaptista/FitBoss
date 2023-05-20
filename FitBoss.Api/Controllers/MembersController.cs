@@ -25,12 +25,12 @@ public class MembersController : ControllerBase
         var request = new GetAllMembersQuery();
         var response = await _mediatr.Send(request);
 
-        if (response is null)
+        if (!response.Succeeded)
         {
-            return Problem();
+            return NotFound(response.Messages[0]);
         }
 
-        return Ok(response);
+        return Ok(response.Data);
     }
 
     [HttpGet]
@@ -40,12 +40,12 @@ public class MembersController : ControllerBase
         var request = new GetMembersByNameQuery(name);
         var response = await _mediatr.Send(request);
 
-        if (response is null)
+        if (!response.Succeeded)
         {
-            return Problem();
+            return NotFound(response.Messages[0]);
         }
 
-        return Ok(response);
+        return Ok(response.Data);
     }
 
     [HttpPost]
