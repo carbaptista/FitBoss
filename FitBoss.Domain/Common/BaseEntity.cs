@@ -1,11 +1,11 @@
 ﻿using FitBoss.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FitBoss.Domain.Common;
-public abstract class BaseEntity : IEntity
+public abstract class BaseEntity : IdentityUser, IEntity
 {
     private readonly List<BaseEvent> _domainEvents = new();
-    public Guid Id { get; set; }
 
     [NotMapped]
     public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();

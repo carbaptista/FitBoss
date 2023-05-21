@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
-namespace FitBoss.Domain.Request_Models.Members;
-public class CreateMemberModel
+namespace Domain.Request_Models.Employee;
+public class CreateEmployeeModel
 {
     [Required]
     [StringLength(50, MinimumLength = 1)]
@@ -20,4 +21,8 @@ public class CreateMemberModel
     [DataType(DataType.EmailAddress)]
     [StringLength(320, MinimumLength = 3)]
     public string Email { get; set; } = "";
+
+    [DataType(DataType.Password)]
+    [StringLength(256, ErrorMessage = "Password must be at least 6 characters long.", MinimumLength = 6)]
+    public string Password { get; set; } = "";
 }

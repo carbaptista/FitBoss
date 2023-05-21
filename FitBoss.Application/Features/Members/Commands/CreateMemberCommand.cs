@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace FitBoss.Application.Features.Members.Commands;
-public record CreateMemberCommand(CreateMemberModel member) : IRequest<Result<Member>>;
+public record CreateMemberCommand(CreateMemberModel Member) : IRequest<Result<Member>>;
 
 public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, Result<Member>>
 {
@@ -23,7 +23,7 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
 
     public async Task<Result<Member>> Handle(CreateMemberCommand request, CancellationToken cancellationToken)
     {
-        var member = Person.Create<Member>(request.member.Name, request.member.Email, request.member.CreatorId);
+        var member = Person.Create<Member>(request.Member.Name, request.Member.UserName, request.Member.Email, request.Member.CreatorId);
 
         try
         {

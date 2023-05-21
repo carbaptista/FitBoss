@@ -11,10 +11,11 @@ public class MemberTests
     public void Create_Should_ReturnMember()
     {
         var name = "firstname lastname";
+        var username = "username";
         var email = "test@email.com";
-        var creatorId = Guid.NewGuid();
+        var creatorId = Guid.NewGuid().ToString();
 
-        var result = Person.Create<Member>(name, email, creatorId);
+        var result = Person.Create<Member>(name, username, email, creatorId);
 
         result.Should().NotBeNull();
         result.Name.Should().BeSameAs(name);
@@ -27,10 +28,11 @@ public class MemberTests
     public void Update_Should_ReturnNewValues()
     {
         var name = "firstname lastname";
+        var username = "username";
         var email = "test@email.com";
-        var creatorId = Guid.NewGuid();
+        var creatorId = Guid.NewGuid().ToString();
 
-        var member = Person.Create<Member>(name, email, creatorId);
+        var member = Person.Create<Member>(name, username, email, creatorId);
 
         var editedMember = new EditMemberModel()
         {
@@ -41,7 +43,7 @@ public class MemberTests
             Weight = 70,
             Height = 175,
             Email = "test2@email.com",
-            UpdatedBy = Guid.NewGuid(),
+            UpdatedBy = Guid.NewGuid().ToString(),
         };
 
         member.Update(editedMember);

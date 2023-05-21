@@ -39,7 +39,7 @@ public class DeleteMemberCommandHandlerTests
     {
         var createdMemberResult = await CreateFreshMember();
 
-        var deleteCommand = new DeleteMemberCommand(Guid.NewGuid());
+        var deleteCommand = new DeleteMemberCommand(Guid.NewGuid().ToString());
         var deleteHandler = new DeleteMemberCommandHandler(new Mock<ILogger<DeleteMemberCommandHandler>>().Object, _context);
 
         var result = await deleteHandler.Handle(deleteCommand, default);
@@ -52,7 +52,7 @@ public class DeleteMemberCommandHandlerTests
     {
         var member = new CreateMemberModel
         {
-            CreatorId = Guid.NewGuid(),
+            CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };

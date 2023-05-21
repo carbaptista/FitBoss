@@ -1,69 +1,72 @@
-﻿using Application.IntegrationTests.Context;
+﻿using Application.Features.Employees.Commands;
+using Application.IntegrationTests.Context;
+using Domain.Request_Models.Employee;
 using FitBoss.Application;
-using FitBoss.Application.Features.Members.Commands;
-using FitBoss.Domain.Request_Models.Members;
+using FitBoss.Domain.Common;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Application.IntegrationTests.Features.Members.Commands;
-
-public class CreateMemberCommandHandlerTests
+namespace Application.IntegrationTests.Features.Employees.Commands;
+public class CreateEmployeeCommandHandlerTests
 {
-    private readonly Mock<ILogger<CreateMemberCommandHandler>> _logger;
+    private readonly Mock<ILogger<CreateEmployeeCommandHandler>> _logger;
     private readonly IApplicationDbContext _context;
+    private readonly Mock<UserManager<BaseEntity>> _userManager;
 
-    public CreateMemberCommandHandlerTests()
+    public CreateEmployeeCommandHandlerTests()
     {
         _logger = new();
         _context = new TestContextFactory().Create();
+        _userManager = new();
     }
 
     [Fact]
     public async Task Create_Should_ReturnSuccessResult_WhenValid()
     {
-        var member = new CreateMemberModel
+        var manager = new CreateEmployeeModel()
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
-        var command = new CreateMemberCommand(member);
-        var handler = new CreateMemberCommandHandler(_logger.Object, _context);
+        var command = new CreateEmployeeCommand(manager);
+        var handler = new CreateEmployeeCommandHandler(_logger.Object, _context, _userManager.Object);
 
         var result = await handler.Handle(command, default);
 
         result.Succeeded.Should().BeTrue();
         result.Messages[0].Should().NotBeNullOrEmpty();
-        result.Data.Name.Should().BeSameAs(member.Name);
-        result.Data.Email.Should().BeSameAs(member.Email);
-        result.Data.CreatedBy.Should().Be(member.CreatorId);
+        result.Data.Name.Should().BeSameAs(manager.Name);
+        result.Data.Email.Should().BeSameAs(manager.Email);
+        result.Data.CreatedBy.Should().Be(manager.CreatorId);
     }
 
     [Fact]
     public async Task Create_Should_ReturnFailureResult_WhenEmailIsNotUnique()
     {
-        var handler = new CreateMemberCommandHandler(_logger.Object, _context);
+        var handler = new CreateEmployeeCommandHandler(_logger.Object, _context, _userManager.Object);
 
-        var member1 = new CreateMemberModel
+        var manager1 = new CreateEmployeeModel
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
-        var command1 = new CreateMemberCommand(member1);
+        var command1 = new CreateEmployeeCommand(manager1);
         await handler.Handle(command1, default);
 
-        var member2 = new CreateMemberModel
+        var manager2 = new CreateEmployeeModel
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
-        var command2 = new CreateMemberCommand(member2);
+        var command2 = new CreateEmployeeCommand(manager2);
         var result = await handler.Handle(command2, default);
 
         result.Succeeded.Should().BeFalse();

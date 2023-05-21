@@ -8,6 +8,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.ConfigureIdentity();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -26,6 +27,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

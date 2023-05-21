@@ -1,8 +1,8 @@
-﻿using FitBoss.Domain.Enums;
+﻿using Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace FitBoss.Domain.Request_Models.Members;
-public class EditMemberModel
+namespace Domain.Request_Models.Employee;
+public class EditEmployeeModel
 {
     [Required(AllowEmptyStrings = false, ErrorMessage = "Id is required")]
     public string Id { get; set; } = "";
@@ -20,13 +20,6 @@ public class EditMemberModel
     [StringLength(320, MinimumLength = 3)]
     public string Email { get; set; } = "";
 
-    [Required]
-    public SubscriptionType SubscriptionType { get; set; }
-
-    public DateOnly? DateOfBirth { get; set; }
-    public bool? Gender { get; set; }
-    public int? Weight { get; set; }
-
-    [Range(0, 300, ErrorMessage = "Height cannot be higher than {2}")]
-    public int? Height { get; set; }
+    [Required(ErrorMessage = "You must specify an employee type")]
+    public EmployeeType Type { get; set; }
 }

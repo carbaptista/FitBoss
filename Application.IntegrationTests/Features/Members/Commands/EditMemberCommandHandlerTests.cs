@@ -24,7 +24,7 @@ public class EditMemberCommandHandlerTests
     {
         var member = new CreateMemberModel
         {
-            CreatorId = Guid.NewGuid(),
+            CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };
@@ -67,14 +67,14 @@ public class EditMemberCommandHandlerTests
     {
         var member1 = new CreateMemberModel
         {
-            CreatorId = Guid.NewGuid(),
+            CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };
 
         var member2 = new CreateMemberModel
         {
-            CreatorId = Guid.NewGuid(),
+            CreatorId = Guid.NewGuid().ToString(),
             Email = "test2@email.com",
             Name = "name lastname"
         };
@@ -103,7 +103,7 @@ public class EditMemberCommandHandlerTests
     {
         var member = new CreateMemberModel
         {
-            CreatorId = Guid.NewGuid(),
+            CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
             Name = "name lastname"
         };
@@ -113,7 +113,7 @@ public class EditMemberCommandHandlerTests
 
         var createdMemberResult = await createHandler.Handle(createCommand, default);
 
-        var editMember = CreateEditMember(Guid.NewGuid(), member.CreatorId);
+        var editMember = CreateEditMember(Guid.NewGuid().ToString(), member.CreatorId);
 
         var editCommand = new EditMemberCommand(editMember);
         var editHandler = new EditMemberCommandHandler(new Mock<ILogger<EditMemberCommandHandler>>().Object, _context);
@@ -124,12 +124,12 @@ public class EditMemberCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
     }
 
-    private EditMemberModel CreateEditMember(Guid id, Guid creatorId)
+    private EditMemberModel CreateEditMember(string id, string creatorId)
     {
         return new EditMemberModel()
         {
             Id = id,
-            UpdatedBy = Guid.NewGuid(),
+            UpdatedBy = Guid.NewGuid().ToString(),
             Name = "new name",
             Email = "test2@email.com",
             DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-20)),

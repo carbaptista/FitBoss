@@ -1,52 +1,52 @@
-﻿using FitBoss.Application.Features.Members.Commands;
-using FitBoss.Application.Features.Members.Queries;
-using FitBoss.Domain.Request_Models.Members;
+﻿using Application.Features.Employees.Commands;
+using Application.Features.Employees.Queries;
+using Domain.Request_Models.Employee;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FitBoss.Api.Controllers;
+namespace Api.Controllers;
 
 [ApiController]
-public class MembersController : ControllerBase
+public class EmployeesController : ControllerBase
 {
     private readonly IMediator _mediatr;
 
-    public MembersController(IMediator mediatr)
+    public EmployeesController(IMediator mediatr)
     {
         _mediatr = mediatr;
     }
 
     [HttpGet]
-    [Route("members")]
+    [Route("employees")]
     public async Task<IActionResult> GetAll()
     {
-        var command = new GetAllMembersQuery();
+        var command = new GetAllEmployeesQuery();
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return NotFound(result.Messages);
 
-        return Ok(result.Data);
+        return Ok(result);
     }
 
     [HttpGet]
-    [Route("members/{name}")]
+    [Route("employees/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
-        var command = new GetMembersByNameQuery(name);
+        var command = new GetEmployeesByNameQuery(name);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
             return NotFound(result.Messages);
 
-        return Ok(result.Data);
+        return Ok(result);
     }
 
     [HttpPost]
-    [Route("members/create")]
-    public async Task<IActionResult> Create(CreateMemberModel member)
+    [Route("employees/create")]
+    public async Task<IActionResult> Create(CreateEmployeeModel manager)
     {
-        var command = new CreateMemberCommand(member);
+        var command = new CreateEmployeeCommand(manager);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
@@ -56,10 +56,10 @@ public class MembersController : ControllerBase
     }
 
     [HttpPatch]
-    [Route("members/update")]
-    public async Task<IActionResult> Update([FromBody] EditMemberModel member)
+    [Route("employees/update")]
+    public async Task<IActionResult> Update([FromBody] EditEmployeeModel manager)
     {
-        var command = new EditMemberCommand(member);
+        var command = new EditEmployeeCommand(manager);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
@@ -69,10 +69,10 @@ public class MembersController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("members/delete")]
+    [Route("employees/delete")]
     public async Task<IActionResult> Delete([FromBody] string id)
     {
-        var command = new DeleteMemberCommand(id);
+        var command = new DeleteEmployeeCommand(id);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)

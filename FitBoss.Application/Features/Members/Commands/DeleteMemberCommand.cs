@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace FitBoss.Application.Features.Members.Commands;
-public record DeleteMemberCommand(Guid id) : IRequest<Result<bool>>;
+public record DeleteMemberCommand(string id) : IRequest<Result<bool>>;
 
 public class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, Result<bool>>
 {
