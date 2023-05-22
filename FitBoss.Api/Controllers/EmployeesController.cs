@@ -2,6 +2,7 @@
 using Application.Features.Employees.Queries;
 using Domain.Request_Models.Employee;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -17,6 +18,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("employees")]
     public async Task<IActionResult> GetAll()
     {
@@ -30,6 +32,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("employees/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
@@ -44,6 +47,7 @@ public class EmployeesController : ControllerBase
 
     [HttpPost]
     [Route("employees/create")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Create(CreateEmployeeModel manager)
     {
         var command = new CreateEmployeeCommand(manager);
@@ -57,6 +61,7 @@ public class EmployeesController : ControllerBase
 
     [HttpPatch]
     [Route("employees/update")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Update([FromBody] EditEmployeeModel manager)
     {
         var command = new EditEmployeeCommand(manager);
@@ -70,6 +75,7 @@ public class EmployeesController : ControllerBase
 
     [HttpDelete]
     [Route("employees/delete")]
+    [Authorize(Roles = "Manager")]
     public async Task<IActionResult> Delete([FromBody] string id)
     {
         var command = new DeleteEmployeeCommand(id);

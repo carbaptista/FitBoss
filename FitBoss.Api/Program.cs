@@ -1,3 +1,5 @@
+using Application.Interfaces;
+using Application.Services;
 using FitBoss.Application;
 using FitBoss.Application.Features.Members.Commands;
 using Persistence;
@@ -8,6 +10,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.AddControllers();
 
@@ -15,6 +18,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg =>
      cfg.RegisterServicesFromAssembly(typeof(IApplicationDbContext).Assembly));
+
+builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
 var app = builder.Build();
 
