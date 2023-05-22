@@ -1,7 +1,9 @@
 ﻿using Domain.Events.Members;
+using FitBoss.Domain.Common;
 using FitBoss.Domain.Entities;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,11 +16,16 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
 {
     private readonly ILogger<EditMemberCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
+    private readonly UserManager<BaseEntity> _userManager;
 
-    public EditMemberCommandHandler(ILogger<EditMemberCommandHandler> logger, IApplicationDbContext context)
+    public EditMemberCommandHandler(
+        ILogger<EditMemberCommandHandler> logger,
+        IApplicationDbContext context,
+        UserManager<BaseEntity> userManager)
     {
         _logger = logger;
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<Result<Member>> Handle(EditMemberCommand request, CancellationToken cancellationToken)
@@ -27,6 +34,10 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
         if (member is null)
             return await Result<Member>.FailureAsync("Member not found");
 
+        var exists = await _userManager.FindByEmailAsync(request.Member.Email);
+        if (exists is not null)
+            return await Result<Member>.FailureAsync("This email has already been registered");
+
         var updated = member.Update(request.Member);
         if (!updated)
         {
@@ -34,19 +45,8 @@ public class EditMemberCommandHandler : IRequestHandler<EditMemberCommand, Resul
             return await Result<Member>.FailureAsync("There was an error updating the member. Please try again");
         }
 
-        try
-        {
-            _context.Members.Update(member);
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateException e)
-        {
-            var innerException = e.InnerException as SqliteException;
-            if (innerException != null && innerException.SqliteErrorCode == 19)
-            {
-                return await Result<Member>.FailureAsync("This email has already been registered");
-            }
-        }
+        _context.Members.Update(member);
+        await _context.SaveChangesAsync();
 
         member.AddDomainEvent(new MemberUpdatedEvent(member));
         return await Result<Member>.SuccessAsync(member, "Member updated");

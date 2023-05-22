@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace Application.Features.Employees.Commands;
-public record EditEmployeeCommand(EditEmployeeModel data) : IRequest<Result<Employee>>;
+public record EditEmployeeCommand(EditEmployeeModel Employee) : IRequest<Result<Employee>>;
 
 public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, Result<Employee>>
 {
@@ -31,30 +31,23 @@ public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, R
 
     public async Task<Result<Employee>> Handle(EditEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var employee = await _context.Employees.FindAsync(request.data.Id);
+        var employee = await _context.Employees.FindAsync(request.Employee.Id);
         if (employee is null)
             return await Result<Employee>.FailureAsync("Employee not found");
 
-        var updated = employee.Update(request.data);
+        var exists = await _userManager.FindByEmailAsync(request.Employee.Email);
+        if (exists is not null)
+            return await Result<Employee>.FailureAsync("This email has already been registered");
+
+        var updated = employee.Update(request.Employee);
         if (!updated)
         {
             _logger.LogError($"Error updating member with Id {employee.Id} - {DateTime.UtcNow}");
             return await Result<Employee>.FailureAsync("There was an error updating the employee. Please try again");
         }
 
-        try
-        {
-            _context.Employees.Update(employee);
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateException e)
-        {
-            var innerException = e.InnerException as SqliteException;
-            if (innerException != null && innerException.SqliteErrorCode == 19)
-            {
-                return await Result<Employee>.FailureAsync("This email has already been registered");
-            }
-        }
+        _context.Employees.Update(employee);
+        await _context.SaveChangesAsync();
 
         if (employee.Type is not null)
         {

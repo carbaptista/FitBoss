@@ -9,9 +9,10 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shared;
+using Shared.Interfaces;
 
 namespace Application.Features.Employees.Commands;
-public record CreateEmployeeCommand(CreateEmployeeModel Manager) : IRequest<Result<Employee>>;
+public record CreateEmployeeCommand(CreateEmployeeModel Employee) : IRequest<Result<Employee>>;
 
 public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Result<Employee>>
 {
@@ -19,9 +20,10 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
     private readonly IApplicationDbContext _context;
     private readonly UserManager<BaseEntity> _userManager;
 
-    public CreateEmployeeCommandHandler(ILogger<CreateEmployeeCommandHandler> logger,
-                                        IApplicationDbContext context,
-                                        UserManager<BaseEntity> userManager)
+    public CreateEmployeeCommandHandler(
+        ILogger<CreateEmployeeCommandHandler> logger,
+        IApplicationDbContext context,
+        UserManager<BaseEntity> userManager)
     {
         _logger = logger;
         _context = context;
@@ -30,26 +32,26 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
 
     public async Task<Result<Employee>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var employee = Person.Create<Employee>(request.Manager.Name, request.Manager.UserName, request.Manager.Email, request.Manager.CreatorId);
+        var employee = Person.Create<Employee>(request.Employee.Name, request.Employee.UserName, request.Employee.Email, request.Employee.CreatorId);
 
-        try
-        {
-            var result = await _userManager.CreateAsync(employee);
+        var exists = await _userManager.FindByEmailAsync(request.Employee.Email);
+        if (exists is not null)
+            return await Result<Employee>.FailureAsync("This email has already been registered");
 
-            if (!result.Succeeded)
-            {
-                var response = await Result<Employee>.FailureAsync("There was an error creating the employee. Please try again");
-                _logger.LogError($"Error creating employee: {response.Exception.Message} - {DateTime.UtcNow}");
-                return response;
-            }
-        }
-        catch (DbUpdateException e)
+        var result = await _userManager.CreateAsync(employee, request.Employee.Password);
+
+        if (!result.Succeeded)
         {
-            var innerException = e.InnerException as SqliteException;
-            if (innerException != null && innerException.SqliteErrorCode == 19)
+            List<string> errors = new();
+            errors.Add("There was an error creating the employee. Please try again");
+            foreach (var error in result.Errors)
             {
-                return await Result<Employee>.FailureAsync("This email has already been registered");
+                errors.Add(error.Description);
             }
+
+            var response = await Result<Employee>.FailureAsync(errors);
+            _logger.LogError($"Error creating employee: {response.Exception.Message} - {DateTime.UtcNow}");
+            return response;
         }
 
         employee.AddDomainEvent(new EmployeeCreatedEvent(employee));

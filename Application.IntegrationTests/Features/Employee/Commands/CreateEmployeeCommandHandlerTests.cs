@@ -3,6 +3,7 @@ using Application.IntegrationTests.Context;
 using Domain.Request_Models.Employee;
 using FitBoss.Application;
 using FitBoss.Domain.Common;
+using FitBoss.Domain.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ public class CreateEmployeeCommandHandlerTests
     {
         _logger = new();
         _context = new TestContextFactory().Create();
-        _userManager = new();
+        _userManager = new UserManagerFactory().Create<BaseEntity>();
     }
 
     [Fact]
@@ -29,8 +30,14 @@ public class CreateEmployeeCommandHandlerTests
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
-            Name = "name lastname"
+            Name = "name lastname",
+            UserName = "name",
+            Password = "password"
         };
+
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<BaseEntity>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
 
         var command = new CreateEmployeeCommand(manager);
         var handler = new CreateEmployeeCommandHandler(_logger.Object, _context, _userManager.Object);
@@ -53,8 +60,14 @@ public class CreateEmployeeCommandHandlerTests
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
-            Name = "name lastname"
+            Name = "name lastname",
+            UserName = "name",
+            Password = "password"
         };
+
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<BaseEntity>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
 
         var command1 = new CreateEmployeeCommand(manager1);
         await handler.Handle(command1, default);
@@ -63,8 +76,12 @@ public class CreateEmployeeCommandHandlerTests
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
-            Name = "name lastname"
+            Name = "name lastname",
+            UserName = "name",
+            Password = "password"
         };
+
+        _userManager.Setup(x => x.FindByEmailAsync(manager2.Email)).ReturnsAsync(new Employee() { Email = manager2.Email });
 
         var command2 = new CreateEmployeeCommand(manager2);
         var result = await handler.Handle(command2, default);

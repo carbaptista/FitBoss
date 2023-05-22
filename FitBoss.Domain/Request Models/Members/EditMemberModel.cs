@@ -20,6 +20,10 @@ public class EditMemberModel
     [StringLength(320, MinimumLength = 3)]
     public string Email { get; set; } = "";
 
+    [DataType(DataType.Password)]
+    [StringLength(128, MinimumLength = 6, ErrorMessage = "The password must be at least {0} characters and at most {1} characters long")]
+    public string? Password { get; set; }
+
     [Required]
     public SubscriptionType SubscriptionType { get; set; }
 

@@ -1,7 +1,9 @@
 ﻿using Domain.Events.Members;
+using FitBoss.Domain.Common;
 using FitBoss.Domain.Entities;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,36 +16,40 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
 {
     private readonly ILogger<CreateMemberCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
+    private readonly UserManager<BaseEntity> _userManager;
 
-    public CreateMemberCommandHandler(ILogger<CreateMemberCommandHandler> logger, IApplicationDbContext context)
+    public CreateMemberCommandHandler(
+        ILogger<CreateMemberCommandHandler> logger,
+        IApplicationDbContext context,
+        UserManager<BaseEntity> userManager)
     {
         _logger = logger;
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<Result<Member>> Handle(CreateMemberCommand request, CancellationToken cancellationToken)
     {
         var member = Person.Create<Member>(request.Member.Name, request.Member.UserName, request.Member.Email, request.Member.CreatorId);
 
-        try
-        {
-            await _context.Members.AddAsync(member);
-            var result = await _context.SaveChangesAsync(cancellationToken);
+        var exists = await _userManager.FindByEmailAsync(request.Member.Email);
+        if (exists is not null)
+            return await Result<Member>.FailureAsync("This email has already been registered");
 
-            if (result == 0)
-            {
-                var response = await Result<Member>.FailureAsync("There was an error creating the member. Please try again");
-                _logger.LogError($"Error creating member: {response.Exception.Message} - {DateTime.UtcNow}");
-                return response;
-            }
-        }
-        catch (DbUpdateException e)
+        var result = await _userManager.CreateAsync(member, request.Member.Password);
+
+        if (!result.Succeeded)
         {
-            var innerException = e.InnerException as SqliteException;
-            if (innerException != null && innerException.SqliteErrorCode == 19)
+            List<string> errors = new();
+            errors.Add("There was an error creating the employee. Please try again");
+            foreach (var error in result.Errors)
             {
-                return await Result<Member>.FailureAsync("This email has already been registered");
+                errors.Add(error.Description);
             }
+
+            var response = await Result<Member>.FailureAsync("There was an error creating the member. Please try again");
+            _logger.LogError($"Error creating member: {response.Exception.Message} - {DateTime.UtcNow}");
+            return response;
         }
 
         member.AddDomainEvent(new MemberCreatedEvent(member));

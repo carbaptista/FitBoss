@@ -1,9 +1,12 @@
 ﻿using Application.IntegrationTests.Context;
 using FitBoss.Application;
 using FitBoss.Application.Features.Members.Commands;
+using FitBoss.Domain.Common;
+using FitBoss.Domain.Entities;
 using FitBoss.Domain.Enums;
 using FitBoss.Domain.Request_Models.Members;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -11,48 +14,50 @@ namespace Application.IntegrationTests.Features.Members.Commands;
 public class EditMemberCommandHandlerTests
 {
     private readonly Mock<ILogger<CreateMemberCommandHandler>> _logger;
+    private readonly Mock<ILogger<EditMemberCommandHandler>> _logger2;
     private readonly IApplicationDbContext _context;
+    private readonly Mock<UserManager<BaseEntity>> _userManager;
 
     public EditMemberCommandHandlerTests()
     {
         _logger = new();
+        _logger2 = new();
         _context = new TestContextFactory().Create();
+        _userManager = new UserManagerFactory().Create<BaseEntity>();
     }
 
     [Fact]
     public async Task Edit_Should_ReturnSuccessResult_WhenValid()
     {
-        var member = new CreateMemberModel
-        {
-            CreatorId = Guid.NewGuid().ToString(),
-            Email = "test@email.com",
-            Name = "name lastname"
-        };
+        var creatorId = Guid.NewGuid().ToString();
+        var email = "test@email.com";
+        var name = "name lastname";
+        var userName = "name";
 
-        var createCommand = new CreateMemberCommand(member);
-        var createHandler = new CreateMemberCommandHandler(_logger.Object, _context);
+        var member = Person.Create<Member>(name, userName, email, creatorId);
 
-        var createdMemberResult = await createHandler.Handle(createCommand, default);
+        await _context.Members.AddAsync(member);
+        await _context.SaveChangesAsync();
 
-        var editMember = CreateEditMember(createdMemberResult.Data.Id, member.CreatorId);
+        var editMember = CreateEditMember(member.Id, creatorId);
 
         var editCommand = new EditMemberCommand(editMember);
-        var editHandler = new EditMemberCommandHandler(new Mock<ILogger<EditMemberCommandHandler>>().Object, _context);
+        var editHandler = new EditMemberCommandHandler(_logger2.Object, _context, _userManager.Object);
 
         var result = await editHandler.Handle(editCommand, default);
 
         result.Succeeded.Should().BeTrue();
         result.Messages[0].Should().NotBeNullOrEmpty();
 
-        result.Data.Id.Should().Be(createdMemberResult.Data.Id);
+        result.Data.Id.Should().BeSameAs(member.Id);
         result.Data.UpdatedBy.Should().NotBeNull();
 
         result.Data.Name.Should().NotBeNullOrEmpty();
-        result.Data.Name.Should().NotBeSameAs(member.Name);
+        result.Data.Name.Should().NotBeSameAs(name);
         result.Data.Name.Should().BeSameAs(editMember.Name);
 
         result.Data.Email.Should().NotBeNullOrEmpty();
-        result.Data.Email.Should().NotBeSameAs(member.Email);
+        result.Data.Email.Should().NotBeSameAs(email);
         result.Data.Email.Should().BeSameAs(editMember.Email);
 
         result.Data.DateOfBirth.Should().NotBeNull();
@@ -79,7 +84,11 @@ public class EditMemberCommandHandlerTests
             Name = "name lastname"
         };
 
-        var createHandler = new CreateMemberCommandHandler(_logger.Object, _context);
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<BaseEntity>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
+
+        var createHandler = new CreateMemberCommandHandler(_logger.Object, _context, _userManager.Object);
         var createCommand1 = new CreateMemberCommand(member1);
         var createCommand2 = new CreateMemberCommand(member2);
 
@@ -90,7 +99,9 @@ public class EditMemberCommandHandlerTests
         editedMember.Email = member2.Email;
 
         var editCommand = new EditMemberCommand(editedMember);
-        var editHandler = new EditMemberCommandHandler(new Mock<ILogger<EditMemberCommandHandler>>().Object, _context);
+        var editHandler = new EditMemberCommandHandler(_logger2.Object, _context, _userManager.Object);
+
+        _userManager.Setup(x => x.FindByEmailAsync(member2.Email)).ReturnsAsync(new Employee() { Email = member2.Email });
 
         var result = await editHandler.Handle(editCommand, default);
 
@@ -108,15 +119,19 @@ public class EditMemberCommandHandlerTests
             Name = "name lastname"
         };
 
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<BaseEntity>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
+
         var createCommand = new CreateMemberCommand(member);
-        var createHandler = new CreateMemberCommandHandler(_logger.Object, _context);
+        var createHandler = new CreateMemberCommandHandler(_logger.Object, _context, _userManager.Object);
 
         var createdMemberResult = await createHandler.Handle(createCommand, default);
 
         var editMember = CreateEditMember(Guid.NewGuid().ToString(), member.CreatorId);
 
         var editCommand = new EditMemberCommand(editMember);
-        var editHandler = new EditMemberCommandHandler(new Mock<ILogger<EditMemberCommandHandler>>().Object, _context);
+        var editHandler = new EditMemberCommandHandler(_logger2.Object, _context, _userManager.Object);
 
         var result = await editHandler.Handle(editCommand, default);
 

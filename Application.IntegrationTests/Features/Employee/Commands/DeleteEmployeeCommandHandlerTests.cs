@@ -14,23 +14,32 @@ namespace Application.IntegrationTests.Features.Employees.Commands;
 public class DeleteEmployeeCommandHandlerTests
 {
     private readonly Mock<ILogger<CreateEmployeeCommandHandler>> _logger;
+    private readonly Mock<ILogger<DeleteEmployeerCommandHandler>> _logger2;
     private readonly IApplicationDbContext _context;
     private readonly Mock<UserManager<BaseEntity>> _userManager;
 
     public DeleteEmployeeCommandHandlerTests()
     {
         _logger = new();
+        _logger2 = new();
         _context = new TestContextFactory().Create();
-        _userManager = new();
+        _userManager = new UserManagerFactory().Create<BaseEntity>();
     }
 
     [Fact]
     public async Task Delete_Should_ReturnSuccessResult_WhenValid()
     {
-        var createdManagerResult = await CreateFreshManager();
+        var createdEmployeeResult = await CreateFreshEmployee();
 
-        var deleteCommand = new DeleteEmployeeCommand(createdManagerResult.Data.Id);
-        var deleteHandler = new DeleteEmployeerCommandHandler(new Mock<ILogger<DeleteEmployeerCommandHandler>>().Object, _context);
+        _userManager.Setup(x => x.DeleteAsync(It.IsAny<BaseEntity>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
+
+        _userManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => new Employee { });
+
+        var deleteCommand = new DeleteEmployeeCommand(createdEmployeeResult.Data.Id);
+        var deleteHandler = new DeleteEmployeerCommandHandler(_logger2.Object, _context, _userManager.Object);
 
         var result = await deleteHandler.Handle(deleteCommand, default);
 
@@ -39,12 +48,15 @@ public class DeleteEmployeeCommandHandlerTests
     }
 
     [Fact]
-    public async Task Delete_ShouldReturnFailureResult_WhenManagerNotFound()
+    public async Task Delete_ShouldReturnFailureResult_WhenEmployeeNotFound()
     {
-        var createdManagerResult = await CreateFreshManager();
+        var createdEmployeeResult = await CreateFreshEmployee();
+
+        _userManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
 
         var deleteCommand = new DeleteEmployeeCommand(Guid.NewGuid().ToString());
-        var deleteHandler = new DeleteEmployeerCommandHandler(new Mock<ILogger<DeleteEmployeerCommandHandler>>().Object, _context);
+        var deleteHandler = new DeleteEmployeerCommandHandler(_logger2.Object, _context, _userManager.Object);
 
         var result = await deleteHandler.Handle(deleteCommand, default);
 
@@ -52,14 +64,20 @@ public class DeleteEmployeeCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
     }
 
-    private async Task<Result<Employee>> CreateFreshManager()
+    private async Task<Result<Employee>> CreateFreshEmployee()
     {
         var employee = new CreateEmployeeModel
         {
             CreatorId = Guid.NewGuid().ToString(),
             Email = "test@email.com",
-            Name = "name lastname"
+            Name = "name lastname",
+            UserName = "name",
+            Password = "password"
         };
+
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<BaseEntity>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
 
         var createCommand = new CreateEmployeeCommand(employee);
         var createHandler = new CreateEmployeeCommandHandler(_logger.Object, _context, _userManager.Object);
