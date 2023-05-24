@@ -1,13 +1,14 @@
-﻿using FitBoss.Application;
+﻿using Application.Extensions;
+using FitBoss.Application;
 using FitBoss.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
-namespace Application.Features.Employees.Queries; 
-public record GetAllEmployeesQuery : IRequest<Result<List<Employee>>>;
+namespace Application.Features.Employees.Queries;
+public record GetAllEmployeesQuery(int page = 1, int pageSize = 30) : IRequest<PaginatedResult<Employee>>;
 
-public class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployeesQuery, Result<List<Employee>>>
+public class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployeesQuery, PaginatedResult<Employee>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -16,10 +17,12 @@ public class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployeesQuery,
         _context = context;
     }
 
-    public async Task<Result<List<Employee>>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<Employee>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
     {
-        var employees = await _context.Employees.ToListAsync();
+        var employees = await _context.Employees
+            .OrderBy(x => x.Name)
+            .ToPaginatedListAsync(request.page, request.pageSize, cancellationToken);
 
-        return await Result<List<Employee>>.SuccessAsync(employees);
+        return employees;
     }
 }

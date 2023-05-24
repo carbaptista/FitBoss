@@ -19,10 +19,10 @@ public class EmployeesController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    [Route("employees")]
-    public async Task<IActionResult> GetAll()
+    [Route("employees/{page:int?}")]
+    public async Task<IActionResult> GetAll(int page)
     {
-        var command = new GetAllEmployeesQuery();
+        var command = new GetAllEmployeesQuery(page);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)

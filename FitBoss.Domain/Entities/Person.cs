@@ -3,7 +3,7 @@
 namespace FitBoss.Domain.Entities;
 public class Person : BaseAuditableEntity
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = "";
 
     public static T Create<T>(string name, string username, string email, string CreatorId) where T : Person, new()
     {
