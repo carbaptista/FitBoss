@@ -7,32 +7,9 @@
 
 <h3 class="mt-5 text-light">Funcionários</h3>
 
-<RadzenDataGrid class="mb-5"
-                ref=@dataGrid Data="@Data"
-                TItem="Employee"
-                LoadData="@LoadData"
-                IsLoading="@IsLoading"
-                AllowPaging="true"
-                PagerHorizontalAlign="Radzen.HorizontalAlign.Center"
-                AllowSorting="true"
-                Count="@Count"
-                PageSize="@PageSize"
-                PageNumbersCount="5"
-                ShowPagingSummary="true"
-                PagingSummaryFormat="@pagingSummaryFormat"
-                AllowAlternatingRows="true" EmptyText="Nenhum funcionário encontrado" EndsWithText="Termina com" EnumFilterSelectText="Selecionar" EqualsText="Igual" FilterText="Filtrar" GreaterThanOrEqualsText="Maior ou igual a" GreaterThanText="Maior que" IsEmptyText="Vazio" IsNotEmptyText="Não vazio" IsNotNullText="Não nulo" IsNullText="Nulo" LessThanOrEqualsText="Menor ou igual a" LessThanText="Menor que" NotEqualsText="Diferente" OrOperatorText="Ou" PagerAlwaysVisible="true" PagerPosition="Radzen.PagerPosition.TopAndBottom" PageSizeText="Items por página" Responsive="true" StartsWithText="Começa com" AllowColumnReorder="true" AllowColumnPicking="true" AllowFilterDateInput="false" AllowFiltering="true" AllowGrouping="false" AllowVirtualization="false">
-    <Columns>
-        <RadzenDataGridColumn TItem="Employee" Property="Name" Title="Nome" Frozen="true" Width="160px" />
-        <RadzenDataGridColumn TItem="Employee" Property="Email" Title="Email" Width="200px" />
-        <RadzenDataGridColumn TItem="Employee" Property="Type" Title="Cargo" Width="120px" />
-        <RadzenDataGridColumn TItem="Employee" Property="HiredDate" Title="Contratado Em" FormatString="{0:d}" Width="160px" />
-        <RadzenDataGridColumn TItem="Employee" Property="Branch" Title="Unidade" Width="160px" />
-        <RadzenDataGridColumn TItem="Employee" Property="PhoneNumber" Title="Telefone" Width="160px" />
-    </Columns>
-</RadzenDataGrid>
+
 
 @code {
-    private RadzenDataGrid<Employee>? dataGrid;
     private IEnumerable<Employee>? Data { get; set; }
     private ResultDto? Result { get; set; }
     public bool IsLoading { get; set; }
@@ -41,27 +18,7 @@
     private int Page { get; set; } = 1;
     private int PageSize { get; set; }
     private int Count { get; set; }
-
-    async Task LoadData(LoadDataArgs args)
-    {
-        Page = dataGrid == null ? 1 : dataGrid.CurrentPage;
-        IsLoading = true;
-        var response = await HttpClient.GetFromJsonAsync<ResultDto>($"/employees/{Page}");
-        if (response is null)
-        {
-            ErrorMessage = "Erro ao carregar funcionários";
-        }
-        else
-        {
-            PageSize = response.pageSize;
-            Page = response.currentPage;
-            Count = response.totalCount;
-            Data = response.data;
-            if (dataGrid is not null)
-                dataGrid.CurrentPage = response.currentPage;
-        }
-        IsLoading = false;
-    }
+    
 
     public class ResultDto
     {
