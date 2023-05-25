@@ -1,5 +1,6 @@
 @page "/employees"
 @using Domain.Enums;
+@using Application.Helpers;
 @using FitBoss.Domain.Entities;
 @attribute [Authorize]
 @inject NavigationManager NavManager
@@ -8,7 +9,7 @@
 <h3 class="mt-5 text-dark">Funcionários</h3>
 
 <div class="table-wrapper">
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th scope="col">Nome</th>
@@ -38,15 +39,26 @@
     </table>
 </div>
 
-<nav class="mt-5 d-flex justify-content-center">
-    <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-    </ul>
-</nav>
+@if (Pages is not null)
+{
+    <nav class="mt-5 d-flex justify-content-center">
+        <ul class="pagination">
+            @foreach (var pageItem in Pages)
+            {
+                if (pageItem.ToString() == "...")
+                {
+                    <li class="page-item"><a class="page-link" disabled>@pageItem</a></li>
+                }
+                else
+                {
+                    <li class="page-item @((int)pageItem == Page ? ActiveClass : "")" style="cursor: pointer">
+                        <a class="page-link" @onclick="@(() => PageChanged((int)@pageItem))">@pageItem</a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+}
 
 @code {
     private ResultDto? Result { get; set; }
@@ -55,6 +67,8 @@
     private int Page { get; set; } = 1;
     private int PageSize { get; set; }
     private int Count { get; set; }
+    private List<object>? Pages { get; set; }
+    private string ActiveClass = "active";
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,6 +78,30 @@
             ErrorMessage = "Erro ao carregar funcionários";
             return;
         }
+
+        var paginationResult = PaginationHelper.Paginate(Result.currentPage, Result.totalPages);
+        Page = Result.currentPage;
+        Count = Result.totalCount;
+        if (paginationResult is not null)
+            Pages = paginationResult.Items;
+
+        StateHasChanged();
+    }
+
+    public async Task PageChanged(int page)
+    {
+        Result = await HttpClient.GetFromJsonAsync<ResultDto>($"employees/{page}");
+        if (Result is null)
+        {
+            ErrorMessage = "Erro ao carregar funcionários";
+            return;
+        }
+
+        var paginationResult = PaginationHelper.Paginate(Result.currentPage, Result.totalPages);
+        Page = Result.currentPage;
+        Count = Result.totalCount;
+        if (paginationResult is not null)
+            Pages = paginationResult.Items;
 
         StateHasChanged();
     }

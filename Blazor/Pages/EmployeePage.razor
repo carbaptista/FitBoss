@@ -70,6 +70,7 @@
                 <ValidationMessage For="@(() => EditModel.HiredDate)" />
             </div>
         </div>
+        
         <div class="mb-3">
             <span class="text-success">@SuccessMessage</span>
         </div>
@@ -147,6 +148,11 @@
         {
             ErrorMessage = "Ocorrou um erro";
         }
+    }
+
+    public void GoBack()
+    {
+        NavManager.NavigateTo("employees");
     }
 
     public class ResultDto
