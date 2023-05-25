@@ -22,9 +22,10 @@ public class AuthenticationController : ControllerBase
     [Route("login")]
     public async Task<IActionResult> Authenticate([FromBody] EmployeeLoginModel user)
     {
-        if (!await _authManager.ValidateUser(user))
+        var validationResult = await _authManager.ValidateUser(user);
+        if (!validationResult.Item1)
             return Unauthorized();
 
-        return Ok(new { Token = await _authManager.CreateToken() });
+        return Ok(new { Token = await _authManager.CreateToken(), Id = validationResult.Item2 });
     }
 }

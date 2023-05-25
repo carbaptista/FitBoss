@@ -1,7 +1,7 @@
 ﻿namespace Domain.Enums;
 public enum EmployeeType
 {
-    Manager,
-    Trainer,
-    Receptionist
+    Gerente,
+    Professor,
+    Recepcionista
 }

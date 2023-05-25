@@ -1,13 +1,14 @@
-﻿using FitBoss.Application;
+﻿using Application.Extensions;
+using FitBoss.Application;
 using FitBoss.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace Application.Features.Employees.Queries;
-public record GetEmployeesByNameQuery(string Name) : IRequest<Result<List<Employee>>>;
+public record GetEmployeesByNameQuery(string Name, int page = 1, int pageSize = 30) : IRequest<PaginatedResult<Employee>>;
 
-public class GetEmployeesByNameQueryHandler : IRequestHandler<GetEmployeesByNameQuery, Result<List<Employee>>>
+public class GetEmployeesByNameQueryHandler : IRequestHandler<GetEmployeesByNameQuery, PaginatedResult<Employee>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -16,16 +17,13 @@ public class GetEmployeesByNameQueryHandler : IRequestHandler<GetEmployeesByName
         _context = context;
     }
 
-    public async Task<Result<List<Employee>>> Handle(GetEmployeesByNameQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<Employee>> Handle(GetEmployeesByNameQuery request, CancellationToken cancellationToken)
     {
         var employees = await _context.Employees
             .Where(x => x.Name.ToLower().Contains(request.Name))
-            .ToListAsync();
+            .ToPaginatedListAsync(request.page, request.pageSize, cancellationToken);
 
-        if (employees.Count == 0)
-            return await Result<List<Employee>>.FailureAsync($"No employees found with name containing {request.Name}");
-
-        return await Result<List<Employee>>.SuccessAsync(employees);
+        return employees;
     }
 }
 

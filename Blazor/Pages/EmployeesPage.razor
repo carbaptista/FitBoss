@@ -1,20 +1,34 @@
 @page "/employees"
+@using Blazored.LocalStorage;
 @using Domain.Enums;
 @using Application.Helpers;
+@using Domain.Request_Models.Employee;
 @using FitBoss.Domain.Entities;
 @attribute [Authorize]
 @inject NavigationManager NavManager
 @inject HttpClient HttpClient
+@inject AuthenticationStateProvider AuthProvider
+@inject ILocalStorageService LocalStorage
 
-<h3 class="text-dark">Funcionários</h3>
-<form @onsubmit="Search" class="d-flex flex-row justify-content-start">
-    <div class="input-group mb-3">
-        <InputText @bind-Value="@SearchString" class="form-control" placeholder="Buscar pelo nome" />
-        <button class="btn btn-primary" type="submit">Buscar</button>
-    </div>
-</form>
+<PageTitle>Funcionários - FitBoss</PageTitle>
 
+<h3 class="text-dark">
+    Funcionários
+    @if (ErrorMessage is not null)
+    {
+        <span class="text-danger" style="font-size: 1rem !important;">@ErrorMessage</span>
+    }
+</h3>
+<div class="d-flex justify-content-start align-items-baseline">
+    <form @onsubmit="Search" class="col-6 me-3">
+        <div class="input-group mb-3">
+            <InputText @bind-Value="@SearchString" class="form-control" placeholder="Buscar pelo nome" />
+            <button class="btn btn-primary" type="submit">Buscar</button>
+        </div>
+    </form>
 
+    <Button Color="Color.Primary" Clicked="@ShowModal">Criar</Button>
+</div>
 
 <div class="table-wrapper">
     <table class="table table-hover">
@@ -68,16 +82,65 @@
     </nav>
 }
 
+<Modal @ref="modalRef">
+    <ModalContent Centered>
+        <EditForm Model="CreateModel" OnValidSubmit="@CreateEmployee">
+            <DataAnnotationsValidator />
+            @if(CreationErrorMessages.Count > 0)
+            {
+                @foreach (var message in CreationErrorMessages)
+                {
+                    <li><span class="text-danger">@message</span></li>
+                }
+            }
+            <ModalHeader>
+                <ModalTitle>Criar funcionário</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <Field class="mb-3">
+                    <FieldLabel For="@CreateModel.Name">Nome</FieldLabel>
+                    <InputText class="form-control" @bind-Value="@CreateModel.Name" />
+                    <ValidationMessage For=@(() => CreateModel.Name) />
+                </Field>
+                <Field class="mb-3">
+                    <FieldLabel For="@CreateModel.UserName">Nome de usuário</FieldLabel>
+                    <InputText class="form-control" @bind-Value="@CreateModel.UserName" />
+                    <ValidationMessage For=@(() => CreateModel.UserName) />
+                </Field>
+                <Field class="mb-3">
+                    <FieldLabel For="@CreateModel.Email">Email</FieldLabel>
+                    <InputText class="form-control" @bind-Value="@CreateModel.Email" />
+                    <ValidationMessage For=@(() => CreateModel.Email) />
+                </Field>
+                <Field class="mb-3">
+                    <FieldLabel For="@CreateModel.Password">Senha</FieldLabel>
+                    <InputText type="password" class="form-control" @bind-Value="@CreateModel.Password" />
+                    <ValidationMessage For=@(() => CreateModel.Password) />
+                </Field>
+                <InputText type="hidden" @bind-Value="@CreateModel.CreatorId" />
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="@HideModal">Fechar</Button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </ModalFooter>
+        </EditForm>
+    </ModalContent>
+</Modal>
+
 @code {
     private ResultDto? Result { get; set; }
     public bool IsLoading { get; set; }
     private string? ErrorMessage { get; set; }
+    private List<string> CreationErrorMessages { get; set; } = new();
     private int Page { get; set; } = 1;
     private int PageSize { get; set; }
     private int Count { get; set; }
     private List<object>? Pages { get; set; }
     private string ActiveClass = "active";
     private string? SearchString { get; set; }
+    private Modal modalRef = new();
+    private CreateEmployeeModel CreateModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,6 +157,7 @@
         if (paginationResult is not null)
             Pages = paginationResult.Items;
 
+        CreateModel.CreatorId = await LocalStorage.GetItemAsync<string>("loggedInUserId");
         StateHasChanged();
     }
 
@@ -117,6 +181,7 @@
 
     public async Task Search()
     {
+        Pages = null;
         if (string.IsNullOrEmpty(SearchString))
         {
             await PageChanged(1);
@@ -124,13 +189,13 @@
         }
 
         Result = await HttpClient.GetFromJsonAsync<ResultDto>($"employees/name/{SearchString}");
-
         if (Result is null)
         {
-            ErrorMessage = "Erro ao carregar funcionários";
+            ErrorMessage = "Nenhum funcionário encontrado";
             return;
         }
 
+        ErrorMessage = null;
         var paginationResult = PaginationHelper.Paginate(Result.currentPage, Result.totalPages);
         Page = Result.currentPage;
         Count = Result.totalCount;
@@ -145,6 +210,32 @@
         NavManager.NavigateTo($"/employee/{id}");
     }
 
+    private async Task CreateEmployee()
+    {
+        var content = JsonContent.Create(CreateModel);
+        var response = await HttpClient.PostAsync("employees/create", content);
+
+        var parsedResponse = await response.Content.ReadFromJsonAsync<CreationResultDto>();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            CreationErrorMessages = parsedResponse!.messages!;
+            return;
+        }
+
+        NavManager.NavigateTo($"/employees/{parsedResponse!.data!.Id}");
+    }
+
+    private async Task ShowModal()
+    {
+        await modalRef.Show();
+    }
+
+    private async Task HideModal()
+    {
+        await modalRef.Hide();
+    }
+
     public class ResultDto
     {
         public IEnumerable<Employee>? data { get; set; }
@@ -156,5 +247,14 @@
         public int totalPages { get; set; }
         public int totalCount { get; set; }
         public int pageSize { get; set; }
+    }
+
+    public class CreationResultDto
+    {
+        public Employee? data { get; set; }
+        public List<string>? messages { get; set; }
+        public bool succeeded { get; set; }
+        public Exception? exception { get; set; }
+        public int code { get; set; }
     }
 }

@@ -14,7 +14,6 @@ public class CreateEmployeeModel
     [RegularExpression("^[a-zA-Z.]*$", ErrorMessage = "Only letters and periods with no spaces are allowed")]
     public string UserName { get; set; } = default!;
 
-    [Required]
     public string CreatorId { get; set; } = "";
 
     [Required]

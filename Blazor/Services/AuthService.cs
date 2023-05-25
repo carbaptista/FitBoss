@@ -35,7 +35,7 @@ public class AuthService : IAuthService
         var loginResult = JsonSerializer
             .Deserialize<LoginResult>(
             await response.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
 
         if (!response.IsSuccessStatusCode)
         {
@@ -44,6 +44,7 @@ public class AuthService : IAuthService
         }
 
         await _localStorage.SetItemAsync("authToken", loginResult.Token);
+        await _localStorage.SetItemAsync("loggedInUserId", loginResult.Id);
         loginResult.Success = response.IsSuccessStatusCode;
 
         ((ApiAuthenticationStateProvider)_authenticationStateProvider)

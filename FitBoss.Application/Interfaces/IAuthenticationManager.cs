@@ -3,6 +3,6 @@
 namespace Application.Interfaces;
 public interface IAuthenticationManager
 {
-    Task<bool> ValidateUser(EmployeeLoginModel employee);
+    Task<(bool, string?)> ValidateUser(EmployeeLoginModel employee);
     Task<string> CreateToken();
 }

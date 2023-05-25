@@ -21,13 +21,13 @@ public class AuthenticationManager : IAuthenticationManager
         _configuration = configuration;
     }
 
-    public async Task<bool> ValidateUser(EmployeeLoginModel employee)
+    public async Task<(bool, string?)> ValidateUser(EmployeeLoginModel employee)
     {
         _user = await _userManager.FindByNameAsync(employee.UserName);
         if (_user is null)
-            return false;
+            return (false, null);
 
-        return await _userManager.CheckPasswordAsync(_user, employee.Password);
+        return (await _userManager.CheckPasswordAsync(_user, employee.Password), _user.Id);
     }
 
     public async Task<string> CreateToken()

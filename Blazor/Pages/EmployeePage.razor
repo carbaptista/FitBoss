@@ -9,6 +9,8 @@
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager NavManager
 
+<PageTitle>Editar Funcionário - FitBoss</PageTitle>
+
 <h3 class="mt-5 ms-5">Editar Funcionário</h3>
 <hr />
 
@@ -86,7 +88,6 @@
     </EditForm>
 }
 
-
 @code {
     [Parameter] public string Id { get; set; } = "";
     public ResultDto? Result { get; set; }
@@ -121,7 +122,7 @@
         EditModel.Id = Id;
         EditModel.UpdatedBy = loggedInUser!.Id;
         EditModel.Name = Result.data.Name;
-        EditModel.Type = Result.data.Type ?? EmployeeType.Trainer;
+        EditModel.Type = Result.data.Type ?? EmployeeType.Professor;
         EditModel.BaseSalary = Result.data.BaseSalary;
         EditModel.SalaryModifier = Result.data.SalaryModifier;
         EditModel.HiredDate = Result.data.HiredDate;

@@ -46,9 +46,8 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
                 errors.Add(error.Description);
             }
 
-            var response = await Result<Employee>.FailureAsync(errors);
-            _logger.LogError($"Error creating employee: {response.Exception.Message} - {DateTime.UtcNow}");
-            return response;
+            _logger.LogError($"Error creating employee - {DateTime.UtcNow}");
+            return await Result<Employee>.FailureAsync(errors);
         }
 
         employee.AddDomainEvent(new EmployeeCreatedEvent(employee));

@@ -38,7 +38,7 @@ public class EmployeeTests
             Name = "new name",
             Email = "test2@email.com",
             UpdatedBy = Guid.NewGuid().ToString(),
-            Type = EmployeeType.Manager
+            Type = EmployeeType.Gerente
         };
 
         employee.Update(editedEmployee);
