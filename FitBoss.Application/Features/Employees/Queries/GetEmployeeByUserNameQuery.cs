@@ -23,7 +23,7 @@ public class GetEmployeeByUserNameQueryHandler : IRequestHandler<GetEmployeeByUs
             .FirstOrDefaultAsync();
         
         if (user is null)
-            return await Result<Employee>.FailureAsync("User not found");
+            return await Result<Employee>.FailureAsync("Employee not found");
 
         return await Result<Employee>.SuccessAsync(user);
     }

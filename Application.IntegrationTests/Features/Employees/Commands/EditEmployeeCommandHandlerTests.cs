@@ -1,5 +1,6 @@
 ﻿using Application.Features.Employees.Commands;
 using Application.IntegrationTests.Context;
+using Domain.Enums;
 using Domain.Request_Models.Employee;
 using FitBoss.Application;
 using FitBoss.Domain.Common;
@@ -28,22 +29,24 @@ public class EditEmployeeCommandHandlerTests
     [Fact]
     public async Task Edit_Should_ReturnSuccessResult_WhenValid()
     {
-        var creatorId = Guid.NewGuid().ToString();
-        var email = "test@email.com";
-        var name = "name lastname";
-        var userName = "name";
+        var employeeModel = CreateEmployee();
 
-        var manager = Person.Create<Employee>(name, userName, email, creatorId);
-        manager.Type = null;
-        await _context.Employees.AddAsync(manager);
+        var employee = Person.Create<Employee>(
+            employeeModel.Name,
+            employeeModel.UserName,
+            employeeModel.Email,
+            employeeModel.CreatorId);
+
+        employee.Type = null;
+        await _context.Employees.AddAsync(employee);
         await _context.SaveChangesAsync();
 
-        var editManager = CreateEditEmployee(manager.Id, creatorId);
+        var editManager = CreateEditEmployee(employee.Id, employeeModel.CreatorId);
 
         var editCommand = new EditEmployeeCommand(editManager);
         var editHandler = new EditEmployeeCommandHandler(_logger2.Object, _context, _userManager.Object);
 
-        _userManager.Setup(x => x.FindByIdAsync(manager.Id)).ReturnsAsync(new Employee() { Id = manager.Id });
+        _userManager.Setup(x => x.FindByIdAsync(employee.Id)).ReturnsAsync(new Employee() { Id = employee.Id });
         _userManager.Setup(x => x.GetRolesAsync(It.IsAny<BaseEntity>())).ReturnsAsync(new List<string>());
         
         var result = await editHandler.Handle(editCommand, default);
@@ -51,26 +54,45 @@ public class EditEmployeeCommandHandlerTests
         result.Succeeded.Should().BeTrue();
         result.Messages[0].Should().NotBeNullOrEmpty();
 
-        result.Data.Id.Should().Be(manager.Id);
+        result.Data.Id.Should().Be(employee.Id);
         result.Data.UpdatedBy.Should().NotBeNull();
 
         result.Data.Name.Should().NotBeNullOrEmpty();
-        result.Data.Name.Should().NotBeSameAs(name);
+        result.Data.Name.Should().NotBeSameAs(employeeModel.Name);
         result.Data.Name.Should().BeSameAs(editManager.Name);
 
-        result.Data.Email.Should().NotBeNullOrEmpty();
-        result.Data.Email.Should().NotBeSameAs(email);
-        result.Data.Email.Should().BeSameAs(editManager.Email);
+        result.Data.UserName.Should().BeSameAs(employee.UserName);
+        result.Data.Email.Should().BeSameAs(employee.Email);
+        result.Data.HiredDate.Should().NotBe(null);
+        result.Data.Branch.Should().Be("Salvador");
+        result.Data.SalaryModifier.Should().Be(1);
+        result.Data.Type.Should().Be(EmployeeType.Gerente);
+    }
+
+    private CreateEmployeeModel CreateEmployee()
+    {
+        return new CreateEmployeeModel
+        {
+            Name = "name lastname",
+            Email = "test@gmail.com",
+            Password = "password",
+            UserName = "username",
+            CreatorId = Guid.NewGuid().ToString()
+        };
     }
 
     private EditEmployeeModel CreateEditEmployee(string id, string creatorId)
     {
-        return new EditEmployeeModel()
+        return new EditEmployeeModel
         {
             Id = id,
             UpdatedBy = Guid.NewGuid().ToString(),
             Name = "new name",
-            Email = "test2@email.com"
+            BaseSalary = 2000,
+            Branch = "Salvador",
+            HiredDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            SalaryModifier = 1,
+            Type = EmployeeType.Gerente
         };
     }
 }

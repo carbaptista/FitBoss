@@ -22,7 +22,8 @@ public class GetEmployeesByNameQueryHandlerTests
 
         var result = await handler.Handle(command, default);
 
-        result.Succeeded.Should().BeFalse();
-        result.Messages[0].Should().NotBeNullOrEmpty();
+        result.Data.Count.Should().Be(0);
+        result.CurrentPage.Should().Be(1);
+        result.TotalCount.Should().Be(0);
     }
 }

@@ -1,4 +1,5 @@
-﻿using FitBoss.Application.Features.Members.Commands;
+﻿using Application.Features.Members.Queries;
+using FitBoss.Application.Features.Members.Commands;
 using FitBoss.Application.Features.Members.Queries;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
@@ -30,10 +31,23 @@ public class MembersController : ControllerBase
     }
 
     [HttpGet]
-    [Route("members/{name}")]
+    [Route("members/name/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
         var command = new GetMembersByNameQuery(name);
+        var result = await _mediatr.Send(command);
+
+        if (!result.Succeeded)
+            return NotFound(result.Messages);
+
+        return Ok(result.Data);
+    }
+
+    [HttpGet]
+    [Route("members/id/{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var command = new GetMemberByIdQuery(id);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)

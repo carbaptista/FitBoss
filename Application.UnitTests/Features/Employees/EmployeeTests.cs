@@ -36,7 +36,6 @@ public class EmployeeTests
         var editedEmployee = new EditEmployeeModel()
         {
             Name = "new name",
-            Email = "test2@email.com",
             UpdatedBy = Guid.NewGuid().ToString(),
             Type = EmployeeType.Gerente
         };
