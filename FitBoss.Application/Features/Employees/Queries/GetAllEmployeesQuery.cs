@@ -2,7 +2,6 @@
 using FitBoss.Application;
 using FitBoss.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace Application.Features.Employees.Queries;

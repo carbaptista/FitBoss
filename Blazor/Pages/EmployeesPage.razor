@@ -1,0 +1,88 @@
+@page "/employees"
+@using Domain.Enums;
+@using FitBoss.Domain.Entities;
+@attribute [Authorize]
+@inject NavigationManager NavManager
+@inject HttpClient HttpClient
+
+<h3 class="mt-5 text-dark">Funcionários</h3>
+
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Cargo</th>
+                <th scope="col">Unidade</th>
+                <th scope="col">Editar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Result is not null && Result.data is not null)
+            {
+                @foreach (var item in Result.data)
+                {
+                    <tr>
+                        <th scope="row">@item.Name</th>
+                        <td>@item.Type</td>
+                        <td>@item.Branch</td>
+                        <td>
+                            <a role="button" @onclick="@(() => GoToEmployee(item.Id))">
+                                <i id="@item.Id" class="bi bi-pencil-fill text-center" style="cursor: pointer"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav class="mt-5 d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+</nav>
+
+@code {
+    private ResultDto? Result { get; set; }
+    public bool IsLoading { get; set; }
+    private string? ErrorMessage { get; set; }
+    private int Page { get; set; } = 1;
+    private int PageSize { get; set; }
+    private int Count { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Result = await HttpClient.GetFromJsonAsync<ResultDto>($"employees/{Page}");
+        if (Result is null)
+        {
+            ErrorMessage = "Erro ao carregar funcionários";
+            return;
+        }
+
+        StateHasChanged();
+    }
+
+    public void GoToEmployee(string id)
+    {
+        NavManager.NavigateTo($"/employee/{id}");
+    }
+
+    public class ResultDto
+    {
+        public IEnumerable<Employee>? data { get; set; }
+        public string? messages { get; set; }
+        public bool succeeded { get; set; }
+        public Exception? exception { get; set; }
+        public int code { get; set; }
+        public int currentPage { get; set; }
+        public int totalPages { get; set; }
+        public int totalCount { get; set; }
+        public int pageSize { get; set; }
+    }
+}

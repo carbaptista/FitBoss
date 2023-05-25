@@ -4,8 +4,6 @@ using FitBoss.Domain.Entities;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shared;
 

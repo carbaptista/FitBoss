@@ -15,11 +15,13 @@ public class EditEmployeeModel
     [StringLength(50, ErrorMessage = "Name cannot be longer than {1}")]
     public string Name { get; set; } = "";
 
-    [Required]
-    [DataType(DataType.EmailAddress)]
-    [StringLength(320, MinimumLength = 3)]
-    public string Email { get; set; } = "";
-
     [Required(ErrorMessage = "You must specify an employee type")]
     public EmployeeType Type { get; set; }
+
+    public decimal BaseSalary { get; set; }
+    public decimal SalaryModifier { get; set; }
+    public string Branch { get; set; } = "";
+
+    [Required(ErrorMessage = "A hire date is required")]
+    public DateOnly HiredDate { get; set; }
 }

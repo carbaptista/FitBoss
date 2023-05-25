@@ -13,10 +13,13 @@ public class Employee : Person
     public bool Update(EditEmployeeModel data)
     {
         Name = data.Name;
-        Email = data.Email;
         UpdatedBy = data.UpdatedBy;
         UpdatedDate = DateTime.UtcNow;
         Type = data.Type;
+        BaseSalary = data.BaseSalary;
+        Branch = data.Branch;
+        HiredDate = data.HiredDate;
+        SalaryModifier = data.SalaryModifier;
 
         return true;
     }

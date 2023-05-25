@@ -5,11 +5,8 @@ using FitBoss.Domain.Common;
 using FitBoss.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shared;
-using Shared.Interfaces;
 
 namespace Application.Features.Employees.Commands;
 public record CreateEmployeeCommand(CreateEmployeeModel Employee) : IRequest<Result<Employee>>;

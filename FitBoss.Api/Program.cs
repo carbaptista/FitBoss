@@ -23,7 +23,7 @@ builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
 builder.Services.AddCors(policyBuilder =>
     policyBuilder.AddDefaultPolicy(policy =>
-        policy.WithOrigins("*").AllowAnyHeader().AllowAnyHeader())
+        policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader())
 );
 
 var app = builder.Build();

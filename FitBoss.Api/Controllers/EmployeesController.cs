@@ -33,10 +33,38 @@ public class EmployeesController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    [Route("employees/{name}")]
+    [Route("employees/name/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
         var command = new GetEmployeesByNameQuery(name);
+        var result = await _mediatr.Send(command);
+
+        if (!result.Succeeded)
+            return NotFound(result.Messages);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("employees/id/{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var command = new GetEmployeeByIdQuery(id);
+        var result = await _mediatr.Send(command);
+
+        if (!result.Succeeded)
+            return NotFound(result.Messages);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("employees/username/{username}")]
+    public async Task<IActionResult> GetByUsername(string username)
+    {
+        var command = new GetEmployeeByUserNameQuery(username);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)

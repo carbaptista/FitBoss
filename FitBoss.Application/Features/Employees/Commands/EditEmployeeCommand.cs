@@ -1,4 +1,5 @@
-﻿using Domain.Events.Employees;
+﻿using Application.Helpers;
+using Domain.Events.Employees;
 using Domain.Request_Models.Employee;
 using FitBoss.Application;
 using FitBoss.Domain.Common;
@@ -35,10 +36,6 @@ public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, R
         if (employee is null)
             return await Result<Employee>.FailureAsync("Employee not found");
 
-        var exists = await _userManager.FindByEmailAsync(request.Employee.Email);
-        if (exists is not null)
-            return await Result<Employee>.FailureAsync("This email has already been registered");
-
         var updated = employee.Update(request.Employee);
         if (!updated)
         {
@@ -47,7 +44,10 @@ public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, R
         }
 
         _context.Employees.Update(employee);
-        await _context.SaveChangesAsync();
+        var saveResult = await _context.SaveChangesAsync(cancellationToken);
+
+        if(saveResult == 0)
+            return await Result<Employee>.FailureAsync("There was an error updating the employee. Please try again");
 
         if (employee.Type is not null)
         {

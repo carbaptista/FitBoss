@@ -41,7 +41,6 @@ public class AuthService : IAuthService
         {
             loginResult.Error = "Invalid login attempt";
             return loginResult;
-
         }
 
         await _localStorage.SetItemAsync("authToken", loginResult.Token);
