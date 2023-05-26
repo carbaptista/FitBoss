@@ -3,6 +3,7 @@ using FitBoss.Application.Features.Members.Commands;
 using FitBoss.Application.Features.Members.Queries;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitBoss.Api.Controllers;
@@ -17,7 +18,12 @@ public class MembersController : ControllerBase
         _mediatr = mediatr;
     }
 
+    /// <summary>
+    /// Gets all members with pagination - Retorna todos os alunos com paginação
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
+    [Authorize]
     [Route("members")]
     public async Task<IActionResult> GetAll()
     {
@@ -30,7 +36,13 @@ public class MembersController : ControllerBase
         return Ok(result.Data);
     }
 
+    /// <summary>
+    /// Gets members by name with pagination - Retorn alunos pelo nome com paginação
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     [HttpGet]
+    [Authorize]
     [Route("members/name/{name}")]
     public async Task<IActionResult> GetByName(string name)
     {
@@ -43,7 +55,13 @@ public class MembersController : ControllerBase
         return Ok(result.Data);
     }
 
+    /// <summary>
+    /// Gets a member by id - Retorna um membro pelo id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
+    [Authorize]
     [Route("members/id/{id}")]
     public async Task<IActionResult> GetById(string id)
     {
@@ -56,7 +74,13 @@ public class MembersController : ControllerBase
         return Ok(result.Data);
     }
 
+    /// <summary>
+    /// Creates a member - Cria um membro
+    /// </summary>
+    /// <param name="member"></param>
+    /// <returns></returns>
     [HttpPost]
+    [Authorize(Roles = "Manager, Receptionist")]
     [Route("members/create")]
     public async Task<IActionResult> Create(CreateMemberModel member)
     {
@@ -69,7 +93,13 @@ public class MembersController : ControllerBase
         return Created("", result);
     }
 
+    /// <summary>
+    /// Updates a member - Atualiza um membro
+    /// </summary>
+    /// <param name="member"></param>
+    /// <returns></returns>
     [HttpPatch]
+    [Authorize(Roles = "Manager, Receptionist")]
     [Route("members/update")]
     public async Task<IActionResult> Update([FromBody] EditMemberModel member)
     {
@@ -82,7 +112,13 @@ public class MembersController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Deletes a member - Deleta um membro
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete]
+    [Authorize(Roles = "Manager")]
     [Route("members/delete")]
     public async Task<IActionResult> Delete([FromBody] string id)
     {

@@ -12,12 +12,17 @@ public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<BaseEntity> _userManager;
     private readonly IAuthenticationManager _authManager;
+
     public AuthenticationController(UserManager<BaseEntity> userManager, IAuthenticationManager authManager)
     {
         _userManager = userManager;
         _authManager = authManager;
     }
 
+
+    /// <summary>
+    /// Logs in an employee with username and password - Faz o login de um funcionário com usuário e senha
+    /// </summary>
     [HttpPost]
     [Route("login")]
     public async Task<IActionResult> Authenticate([FromBody] EmployeeLoginModel user)

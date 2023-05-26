@@ -1,9 +1,12 @@
+using Api.Extensions;
 using Application.Interfaces;
 using Application.Services;
 using FitBoss.Application;
 using FitBoss.Application.Features.Members.Commands;
+using Microsoft.OpenApi.Models;
 using Persistence;
 using System.Net.NetworkInformation;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -15,7 +18,7 @@ builder.Services.ConfigureIdentity();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSwagger();
 builder.Services.AddMediatR(cfg =>
      cfg.RegisterServicesFromAssembly(typeof(IApplicationDbContext).Assembly));
 

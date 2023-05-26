@@ -17,6 +17,11 @@ public class EmployeesController : ControllerBase
         _mediatr = mediatr;
     }
 
+    /// <summary>
+    /// Gets all employees with pagination - Retorna todos os funcionários com paginação
+    /// </summary>
+    /// <param name="page"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     [Route("employees/{page:int?}")]
@@ -31,6 +36,11 @@ public class EmployeesController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Gets employees by name with pagination - Retorna funcionários pelo nome com paginação
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     [Route("employees/name/{name}")]
@@ -45,6 +55,12 @@ public class EmployeesController : ControllerBase
         return Ok(result);
     }
 
+
+    /// <summary>
+    /// Gets an employee by Id - Retorna um funcionário pelo Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     [Route("employees/id/{id}")]
@@ -59,6 +75,11 @@ public class EmployeesController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Gets an employee by username - Retorna um funcionário pelo nome de usuário
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     [Route("employees/username/{username}")]
@@ -73,6 +94,11 @@ public class EmployeesController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Creates an employee - Cria um funcionário
+    /// </summary>
+    /// <param name="manager"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("employees/create")]
     [Authorize(Roles = "Manager")]
@@ -87,6 +113,11 @@ public class EmployeesController : ControllerBase
         return Created("", result);
     }
 
+    /// <summary>
+    /// Updates an employee - Atualiza um funcionário
+    /// </summary>
+    /// <param name="manager"></param>
+    /// <returns></returns>
     [HttpPatch]
     [Route("employees/update")]
     [Authorize(Roles = "Manager")]
@@ -101,6 +132,12 @@ public class EmployeesController : ControllerBase
         return Ok(result);
     }
 
+
+    /// <summary>
+    /// Deletes an employee - Deleta um funcionário
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete]
     [Route("employees/delete")]
     [Authorize(Roles = "Manager")]

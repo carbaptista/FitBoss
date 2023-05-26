@@ -2,6 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Request_Models.Employee;
+
+/// <summary>
+/// Model for employee registration
+/// </summary>
 public class CreateEmployeeModel
 {
     [Required]
