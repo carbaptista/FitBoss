@@ -39,14 +39,15 @@ public class EmployeesController : ControllerBase
     /// <summary>
     /// Gets employees by name with pagination - Retorna funcionários pelo nome com paginação
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="name">Name</param>
+    /// <param name="page">Page</param>
     /// <returns></returns>
     [HttpGet]
     [Authorize]
-    [Route("employees/name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
+    [Route("employees/name/{name}/{page:int?}")]
+    public async Task<IActionResult> GetByName(string name, int page = 1)
     {
-        var command = new GetEmployeesByNameQuery(name);
+        var command = new GetEmployeesByNameQuery(name, page);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)

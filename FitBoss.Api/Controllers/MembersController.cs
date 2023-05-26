@@ -21,13 +21,14 @@ public class MembersController : ControllerBase
     /// <summary>
     /// Gets all members with pagination - Retorna todos os alunos com paginação
     /// </summary>
+    /// <param name="page">Page</param>
     /// <returns></returns>
     [HttpGet]
     [Authorize]
-    [Route("members")]
-    public async Task<IActionResult> GetAll()
+    [Route("members/{page:int?}")]
+    public async Task<IActionResult> GetAll(int page = 1)
     {
-        var command = new GetAllMembersQuery();
+        var command = new GetAllMembersQuery(page);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
@@ -39,14 +40,15 @@ public class MembersController : ControllerBase
     /// <summary>
     /// Gets members by name with pagination - Retorn alunos pelo nome com paginação
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="name">Name</param>
+    /// <param name="page">Page</param>
     /// <returns></returns>
     [HttpGet]
     [Authorize]
-    [Route("members/name/{name}")]
-    public async Task<IActionResult> GetByName(string name)
+    [Route("members/name/{name}/{page:int?}")]
+    public async Task<IActionResult> GetByName(string name, int page = 1)
     {
-        var command = new GetMembersByNameQuery(name);
+        var command = new GetMembersByNameQuery(name, page);
         var result = await _mediatr.Send(command);
 
         if (!result.Succeeded)
