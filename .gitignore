@@ -364,3 +364,6 @@ FodyWeavers.xsd
 /Persistence/Database/FitBoss.db-shm
 /Persistence/Database/FitBoss.db-wal
 /Persistence/Database/FitBoss.db
+/FitBoss.Api/FitBoss.db
+/FitBoss.Api/FitBoss.db-shm
+/FitBoss.Api/FitBoss.db-wal
