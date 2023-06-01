@@ -82,7 +82,7 @@ public class MembersController : ControllerBase
     /// <param name="member"></param>
     /// <returns></returns>
     [HttpPost]
-    [Authorize(Roles = "Manager, Receptionist")]
+    [Authorize(Roles = "Gerente, Recepcionista")]
     [Route("members/create")]
     public async Task<IActionResult> Create(CreateMemberModel member)
     {
@@ -101,7 +101,7 @@ public class MembersController : ControllerBase
     /// <param name="member"></param>
     /// <returns></returns>
     [HttpPatch]
-    [Authorize(Roles = "Manager, Receptionist")]
+    [Authorize(Roles = "Gerente, Recepcionista")]
     [Route("members/update")]
     public async Task<IActionResult> Update([FromBody] EditMemberModel member)
     {
@@ -120,7 +120,7 @@ public class MembersController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Gerente")]
     [Route("members/delete")]
     public async Task<IActionResult> Delete([FromBody] string id)
     {

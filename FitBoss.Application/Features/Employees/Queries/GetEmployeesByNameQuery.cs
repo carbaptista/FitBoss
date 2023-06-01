@@ -1,14 +1,13 @@
 ﻿using Application.Extensions;
+using Domain.Dtos;
 using FitBoss.Application;
-using FitBoss.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace Application.Features.Employees.Queries;
-public record GetEmployeesByNameQuery(string Name, int page = 1, int pageSize = 30) : IRequest<PaginatedResult<Employee>>;
+public record GetEmployeesByNameQuery(string Name, int page = 1, int pageSize = 30) : IRequest<PaginatedResult<EmployeeDto>>;
 
-public class GetEmployeesByNameQueryHandler : IRequestHandler<GetEmployeesByNameQuery, PaginatedResult<Employee>>
+public class GetEmployeesByNameQueryHandler : IRequestHandler<GetEmployeesByNameQuery, PaginatedResult<EmployeeDto>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -17,9 +16,20 @@ public class GetEmployeesByNameQueryHandler : IRequestHandler<GetEmployeesByName
         _context = context;
     }
 
-    public async Task<PaginatedResult<Employee>> Handle(GetEmployeesByNameQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<EmployeeDto>> Handle(GetEmployeesByNameQuery request, CancellationToken cancellationToken)
     {
         var employees = await _context.Employees
+            .Select(x => new EmployeeDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                UserName = x.UserName!,
+                Email = x.Email!,
+                Branch = x.Branch,
+                HireDate = x.HiredDate,
+                Type = x.Type,
+                SalaryModifier = x.SalaryModifier
+            })
             .Where(x => x.Name.ToLower().Contains(request.Name))
             .ToPaginatedListAsync(request.page, request.pageSize, cancellationToken);
 

@@ -55,7 +55,6 @@ public class EditEmployeeCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
 
         result.Data.Id.Should().Be(employee.Id);
-        result.Data.UpdatedBy.Should().NotBeNull();
 
         result.Data.Name.Should().NotBeNullOrEmpty();
         result.Data.Name.Should().NotBeSameAs(employeeModel.Name);
@@ -63,7 +62,7 @@ public class EditEmployeeCommandHandlerTests
 
         result.Data.UserName.Should().BeSameAs(employee.UserName);
         result.Data.Email.Should().BeSameAs(employee.Email);
-        result.Data.HiredDate.Should().NotBe(null);
+        result.Data.HireDate.Should().NotBe(null);
         result.Data.Branch.Should().Be("Salvador");
         result.Data.SalaryModifier.Should().Be(1);
         result.Data.Type.Should().Be(EmployeeType.Gerente);
@@ -91,7 +90,7 @@ public class EditEmployeeCommandHandlerTests
             BaseSalary = 2000,
             Branch = "Salvador",
             HiredDate = DateOnly.FromDateTime(DateTime.UtcNow),
-            SalaryModifier = 1,
+            SalaryModifier = (decimal)1,
             Type = EmployeeType.Gerente
         };
     }

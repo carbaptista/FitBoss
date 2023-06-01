@@ -1,5 +1,6 @@
 ﻿using Application.Features.Employees.Commands;
 using Application.IntegrationTests.Context;
+using Domain.Dtos;
 using Domain.Request_Models.Employee;
 using FitBoss.Application;
 using FitBoss.Domain.Common;
@@ -64,7 +65,7 @@ public class DeleteEmployeeCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
     }
 
-    private async Task<Result<Employee>> CreateFreshEmployee()
+    private async Task<Result<EmployeeDto>> CreateFreshEmployee()
     {
         var employee = new CreateEmployeeModel
         {

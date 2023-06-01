@@ -1,13 +1,13 @@
-﻿using FitBoss.Application;
-using FitBoss.Domain.Entities;
+﻿using Domain.Dtos;
+using FitBoss.Application;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace Application.Features.Employees.Queries;
-public record GetEmployeeByUserNameQuery(string UserName) : IRequest<Result<Employee>>;
+public record GetEmployeeByUserNameQuery(string UserName) : IRequest<Result<EmployeeDto>>;
 
-public class GetEmployeeByUserNameQueryHandler : IRequestHandler<GetEmployeeByUserNameQuery, Result<Employee>>
+public class GetEmployeeByUserNameQueryHandler : IRequestHandler<GetEmployeeByUserNameQuery, Result<EmployeeDto>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -16,15 +16,17 @@ public class GetEmployeeByUserNameQueryHandler : IRequestHandler<GetEmployeeByUs
         _context = context;
     }
 
-    public async Task<Result<Employee>> Handle(GetEmployeeByUserNameQuery request, CancellationToken cancellationToken)
+    public async Task<Result<EmployeeDto>> Handle(GetEmployeeByUserNameQuery request, CancellationToken cancellationToken)
     {
-        var user = await _context.Employees
+        var employee = await _context.Employees
             .Where(x => x.UserName == request.UserName)
             .FirstOrDefaultAsync();
-        
-        if (user is null)
-            return await Result<Employee>.FailureAsync("Employee not found");
 
-        return await Result<Employee>.SuccessAsync(user);
+        if (employee is null)
+            return await Result<EmployeeDto>.FailureAsync("Employee not found");
+
+        var employeeDto = employee.GetDto();
+
+        return await Result<EmployeeDto>.SuccessAsync(employeeDto);
     }
 }

@@ -50,7 +50,6 @@ public class EditMemberCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
 
         result.Data.Id.Should().BeSameAs(member.Id);
-        result.Data.UpdatedBy.Should().NotBeNull();
 
         result.Data.Name.Should().NotBeNullOrEmpty();
         result.Data.Name.Should().NotBeSameAs(name);

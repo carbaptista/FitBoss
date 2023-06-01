@@ -1,4 +1,5 @@
-﻿using FitBoss.Domain.Enums;
+﻿using Domain.Dtos;
+using FitBoss.Domain.Enums;
 using FitBoss.Domain.Request_Models.Members;
 using MediatR;
 
@@ -24,5 +25,20 @@ public class Member : Person
         UpdatedDate = DateTime.UtcNow;
 
         return true;
+    }
+
+    public MemberDto GetDto()
+    {
+        return new MemberDto
+        {
+            Id = Id,
+            Name = Name,
+            Email = Email!,
+            Gender = Gender,
+            Height = Height,
+            Weight = Weight,
+            SubscriptionType = SubscriptionType,
+            DateOfBirth = DateOfBirth
+        };
     }
 }

@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Services;
 using FitBoss.Application;
 using FitBoss.Application.Features.Members.Commands;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using System.Net.NetworkInformation;
@@ -30,6 +31,11 @@ builder.Services.AddCors(policyBuilder =>
 );
 
 var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.Services.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

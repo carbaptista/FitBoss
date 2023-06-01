@@ -49,7 +49,6 @@ public class CreateMemberCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
         result.Data.Name.Should().BeSameAs(member.Name);
         result.Data.Email.Should().BeSameAs(member.Email);
-        result.Data.CreatedBy.Should().Be(member.CreatorId);
     }
 
     [Fact]

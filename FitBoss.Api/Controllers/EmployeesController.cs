@@ -102,7 +102,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [Route("employees/create")]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Gerente")]
     public async Task<IActionResult> Create(CreateEmployeeModel manager)
     {
         var command = new CreateEmployeeCommand(manager);
@@ -121,7 +121,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpPatch]
     [Route("employees/update")]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Gerente")]
     public async Task<IActionResult> Update([FromBody] EditEmployeeModel manager)
     {
         var command = new EditEmployeeCommand(manager);
@@ -141,7 +141,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpDelete]
     [Route("employees/delete")]
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Gerente")]
     public async Task<IActionResult> Delete([FromBody] string id)
     {
         var command = new DeleteEmployeeCommand(id);
@@ -151,5 +151,33 @@ public class EmployeesController : ControllerBase
             return Problem(result.Messages[0]);
 
         return Ok();
+    }
+
+    [HttpPost]
+    [Route("employees/createanonymous")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IActionResult> CreateAnonymous(CreateEmployeeModel manager)
+    {
+        var command = new CreateEmployeeCommand(manager);
+        var result = await _mediatr.Send(command);
+
+        if (!result.Succeeded)
+            return Problem(result.Messages[0]);
+
+        EditEmployeeModel updateManager = new()
+        {
+            Id = result.Data.Id,
+            UpdatedBy = result.Data.Id,
+            Branch = "Salvador",
+            HiredDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            Name = result.Data.Name,
+            SalaryModifier = 1,
+            Type = Domain.Enums.EmployeeType.Gerente
+        };
+
+        var command2 = new EditEmployeeCommand(updateManager);
+        var result2 = await _mediatr.Send(command2);
+
+        return Created("", result);
     }
 }

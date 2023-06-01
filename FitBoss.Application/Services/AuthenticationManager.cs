@@ -40,7 +40,7 @@ public class AuthenticationManager : IAuthenticationManager
 
     private SigningCredentials GetSigningCredentials()
     {
-        var keyString = _configuration.GetValue<string>("SECRET");
+        var keyString = _configuration.GetSection("JwtSettings:SECRET").Value;
         var key = Encoding.UTF8.GetBytes(keyString!);
         var secret = new SymmetricSecurityKey(key);
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);

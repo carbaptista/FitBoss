@@ -1,4 +1,5 @@
 ﻿using Application.Helpers;
+using Domain.Dtos;
 using Domain.Events.Employees;
 using Domain.Request_Models.Employee;
 using FitBoss.Application;
@@ -12,9 +13,9 @@ using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace Application.Features.Employees.Commands;
-public record EditEmployeeCommand(EditEmployeeModel Employee) : IRequest<Result<Employee>>;
+public record EditEmployeeCommand(EditEmployeeModel Employee) : IRequest<Result<EmployeeDto>>;
 
-public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, Result<Employee>>
+public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, Result<EmployeeDto>>
 {
     private readonly ILogger<EditEmployeeCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
@@ -30,24 +31,24 @@ public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, R
         _userManager = userManager;
     }
 
-    public async Task<Result<Employee>> Handle(EditEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<EmployeeDto>> Handle(EditEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = await _context.Employees.FindAsync(request.Employee.Id);
         if (employee is null)
-            return await Result<Employee>.FailureAsync("Employee not found");
+            return await Result<EmployeeDto>.FailureAsync("Employee not found");
 
         var updated = employee.Update(request.Employee);
         if (!updated)
         {
             _logger.LogError($"Error updating member with Id {employee.Id} - {DateTime.UtcNow}");
-            return await Result<Employee>.FailureAsync("There was an error updating the employee. Please try again");
+            return await Result<EmployeeDto>.FailureAsync("There was an error updating the employee. Please try again");
         }
 
         _context.Employees.Update(employee);
         var saveResult = await _context.SaveChangesAsync(cancellationToken);
 
         if(saveResult == 0)
-            return await Result<Employee>.FailureAsync("There was an error updating the employee. Please try again");
+            return await Result<EmployeeDto>.FailureAsync("There was an error updating the employee. Please try again");
 
         if (employee.Type is not null)
         {
@@ -57,7 +58,9 @@ public class EditEmployeeCommandHandler : IRequestHandler<EditEmployeeCommand, R
             await _userManager.AddToRoleAsync(user!, employee.Type.ToString()!);
         }
 
+        var employeeDto = employee.GetDto();
+
         employee.AddDomainEvent(new EmployeeUpdatedEvent(employee));
-        return await Result<Employee>.SuccessAsync(employee, "Employee updated");
+        return await Result<EmployeeDto>.SuccessAsync(employeeDto, "Employee updated");
     }
 }

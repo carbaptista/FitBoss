@@ -48,7 +48,6 @@ public class CreateEmployeeCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
         result.Data.Name.Should().BeSameAs(manager.Name);
         result.Data.Email.Should().BeSameAs(manager.Email);
-        result.Data.CreatedBy.Should().Be(manager.CreatorId);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 ﻿using Application.IntegrationTests.Context;
+using Domain.Dtos;
 using FitBoss.Application;
 using FitBoss.Application.Features.Members.Commands;
 using FitBoss.Domain.Common;
@@ -64,7 +65,7 @@ public class DeleteMemberCommandHandlerTests
         result.Messages[0].Should().NotBeNullOrEmpty();
     }
 
-    private async Task<Result<Member>> CreateFreshMember()
+    private async Task<Result<MemberDto>> CreateFreshMember()
     {
         var member = new CreateMemberModel
         {

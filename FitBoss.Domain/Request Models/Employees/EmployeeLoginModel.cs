@@ -7,7 +7,7 @@ public class EmployeeLoginModel
     /// <summary>
     /// Username - Usuário
     /// </summary>
-    /// <example>carhab</example>
+    /// <example>testuser</example>
     [Required(ErrorMessage = "Username is required")]
     [DefaultValue("carhab")]
     public string UserName { get; set; } = "";

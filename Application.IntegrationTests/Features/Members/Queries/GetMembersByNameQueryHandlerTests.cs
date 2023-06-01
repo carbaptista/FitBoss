@@ -24,7 +24,6 @@ public class GetMembersByNameQueryHandlerTests
 
         var result = await handler.Handle(command, default);
 
-        result.Succeeded.Should().BeFalse();
-        result.Messages[0].Should().NotBeNullOrEmpty();
+        result.Data.Count.Should().Be(0);
     }
 }

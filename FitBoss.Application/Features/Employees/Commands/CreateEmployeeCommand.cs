@@ -1,4 +1,5 @@
-﻿using Domain.Events.Employees;
+﻿using Domain.Dtos;
+using Domain.Events.Employees;
 using Domain.Request_Models.Employee;
 using FitBoss.Application;
 using FitBoss.Domain.Common;
@@ -9,9 +10,9 @@ using Microsoft.Extensions.Logging;
 using Shared;
 
 namespace Application.Features.Employees.Commands;
-public record CreateEmployeeCommand(CreateEmployeeModel Employee) : IRequest<Result<Employee>>;
+public record CreateEmployeeCommand(CreateEmployeeModel Employee) : IRequest<Result<EmployeeDto>>;
 
-public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Result<Employee>>
+public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Result<EmployeeDto>>
 {
     private readonly ILogger<CreateEmployeeCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
@@ -27,13 +28,13 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
         _userManager = userManager;
     }
 
-    public async Task<Result<Employee>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<EmployeeDto>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = Person.Create<Employee>(request.Employee.Name, request.Employee.UserName, request.Employee.Email, request.Employee.CreatorId);
 
         var exists = await _userManager.FindByEmailAsync(request.Employee.Email);
         if (exists is not null)
-            return await Result<Employee>.FailureAsync("This email has already been registered");
+            return await Result<EmployeeDto>.FailureAsync("This email has already been registered");
 
         var result = await _userManager.CreateAsync(employee, request.Employee.Password);
 
@@ -47,10 +48,12 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
             }
 
             _logger.LogError($"Error creating employee - {DateTime.UtcNow}");
-            return await Result<Employee>.FailureAsync(errors);
+            return await Result<EmployeeDto>.FailureAsync(errors);
         }
 
+        var employeeDto = employee.GetDto();
+
         employee.AddDomainEvent(new EmployeeCreatedEvent(employee));
-        return await Result<Employee>.SuccessAsync(employee, "Employee created");
+        return await Result<EmployeeDto>.SuccessAsync(employeeDto, "Employee created");
     }
 }

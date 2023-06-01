@@ -367,3 +367,6 @@ FodyWeavers.xsd
 /FitBoss.Api/FitBoss.db
 /FitBoss.Api/FitBoss.db-shm
 /FitBoss.Api/FitBoss.db-wal
+/FitBoss.Api/Properties/ServiceDependencies/fitboss - FTP/profile.arm.json
+/FitBoss.Api/Properties/ServiceDependencies/fitboss - Web Deploy/profile.arm.json
+/FitBoss.Api/Properties/ServiceDependencies/fitboss - Zip Deploy/profile.arm.json

@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Dtos;
+using Domain.Enums;
 using Domain.Request_Models.Employee;
 
 namespace FitBoss.Domain.Entities;
@@ -22,5 +23,20 @@ public class Employee : Person
         SalaryModifier = data.SalaryModifier;
 
         return true;
+    }
+
+    public EmployeeDto GetDto()
+    {
+        return new EmployeeDto
+        {
+            Id = Id,
+            Name = Name,
+            UserName = UserName!,
+            Email = Email!,
+            Branch = Branch,
+            HireDate = HiredDate,
+            SalaryModifier = SalaryModifier,
+            Type = Type
+        };
     }
 }

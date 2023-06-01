@@ -14,11 +14,11 @@ public static class DependecyInjection
     public static IServiceCollection AddPersistence(
         this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(options => 
         options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-
+               
         return services;
     }
 
@@ -44,7 +44,8 @@ public static class DependecyInjection
     public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtSettings = configuration.GetSection("JwtSettings");
-        var secretKey = configuration.GetValue<string>("SECRET");
+        //not a real application so this is fine
+        var secretKey = configuration.GetSection("JwtSettings:SECRET").Value;
 
         services.AddAuthentication(opt =>
         {
