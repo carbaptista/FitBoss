@@ -9,7 +9,7 @@ public class EmployeeLoginModel
     /// </summary>
     /// <example>testuser</example>
     [Required(ErrorMessage = "Username is required")]
-    [DefaultValue("carhab")]
+    [DefaultValue("testuser")]
     public string UserName { get; set; } = "";
 
     /// <summary>
