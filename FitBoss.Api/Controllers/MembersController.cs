@@ -115,7 +115,7 @@ public class MembersController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes a member - Deleta um membro
+    /// Deletes a member by the Id - Deleta um membro pelo Id
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

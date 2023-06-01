@@ -135,7 +135,7 @@ public class EmployeesController : ControllerBase
 
 
     /// <summary>
-    /// Deletes an employee - Deleta um funcionário
+    /// Deletes an employee by the Id - Deleta um funcionário pelo o Id
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
